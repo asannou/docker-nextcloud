@@ -2,25 +2,31 @@ FROM php:5.6-apache
 
 ARG VERSION=9.0.53
 
-EXPOSE 80
-
 WORKDIR /root
 
+# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update
 RUN apt-get install -y bzip2
 
-RUN apt-get install -y libgd-dev libzip-dev libmcrypt-dev libicu-dev libbz2-dev libmagickwand-dev
-RUN docker-php-ext-install gd zip mcrypt intl bz2 pdo_mysql
-RUN yes '' | pecl install imagick apcu-4.0.11
-RUN docker-php-ext-enable imagick apcu
+# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#prerequisites-label
+# Required, Database connectors, Recommended packages
+RUN apt-get install -y libgd-dev libzip-dev libbz2-dev libicu-dev libmcrypt-dev
+RUN docker-php-ext-configure gd --with-jpeg-dir --with-png-dir --with-xpm-dir --with-vpx-dir
+RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
+# For enhanced server performance
+#RUN yes '' | pecl install apcu-4.0.11
+#RUN docker-php-ext-enable apcu
 
-RUN curl -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
+RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
 RUN tar -xjf nextcloud-${VERSION}.tar.bz2
 RUN rm nextcloud-${VERSION}.tar.bz2
 RUN mv nextcloud /var/www/
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
+# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#apache-configuration-label
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
+
+VOLUME /var/www/nextcloud/data
