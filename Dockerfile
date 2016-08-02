@@ -18,6 +18,7 @@ RUN docker-php-ext-enable imagick apcu
 
 RUN curl -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
 RUN tar -xjf nextcloud-${VERSION}.tar.bz2
+RUN rm nextcloud-${VERSION}.tar.bz2
 RUN mv nextcloud /var/www/
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
