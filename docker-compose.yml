@@ -1,0 +1,18 @@
+version: '2'
+services:
+  nextcloud:
+    build: .
+    image: asannou/nextcloud
+    container_name: nextcloud
+    volumes:
+      - ./config.php:/var/www/nextcloud/config/config.php
+      - ./data:/var/www/nextcloud/data
+  proxy:
+    build: proxy
+    image: asannou/nextcloud-sharing-only-proxy
+    container_name: nextcloud-proxy
+    ports:
+      - '80:80'
+      - '8000:8000'
+    depends_on:
+      - nextcloud
