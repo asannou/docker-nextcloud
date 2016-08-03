@@ -34,3 +34,6 @@ COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 
 VOLUME /var/www/nextcloud/data
+
+CMD ["sh", "-c", "chown www-data:root /var/www/nextcloud/config/config.php /var/www/nextcloud/data && apache2-foreground"]
+

@@ -5,8 +5,6 @@ PROXY_NAME := nextcloud-proxy
 PORT := 8000
 SHARING_PORT := 80
 ROOT := /var/www/nextcloud
-# www-data
-UID := 33
 
 up: web proxy
 
@@ -17,7 +15,6 @@ web: volumes
 	docker run -d --name $(NAME) -v $(CURDIR)/config.php:$(ROOT)/config/config.php -v $(CURDIR)/data:$(ROOT)/data $(IMAGE)
 
 volumes: config.php data
-	chown $(UID):0 $+
 
 config.php:
 	touch $@
