@@ -17,7 +17,7 @@ web: volumes
 	docker run -d --name $(NAME) -v $(CURDIR)/config.php:$(ROOT)/config/config.php -v $(CURDIR)/data:$(ROOT)/data $(IMAGE)
 
 volumes: config.php data
-	chown $(UID):root $+
+	chown $(UID):0 $+
 
 config.php:
 	touch $@
