@@ -8,7 +8,7 @@ WORKDIR /root
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update
-RUN apt-get install -y bzip2
+RUN apt-get install -y patch bzip2
 
 # https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#prerequisites-label
 # Required, Database connectors, Recommended packages
@@ -28,6 +28,9 @@ RUN tar -xjf nextcloud-${VERSION}.tar.bz2
 RUN rm nextcloud-${VERSION}.tar.bz2
 RUN mv nextcloud /var/www/
 RUN chown -R www-data:www-data /var/www/nextcloud/
+
+COPY password-policy-on-createUser.patch /root/
+RUN patch -d /var/www/nextcloud/ -p 1 < /root/password-policy-on-createUser.patch
 
 # https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#apache-configuration-label
 COPY nextcloud.conf /etc/apache2/sites-available/
