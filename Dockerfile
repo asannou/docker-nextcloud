@@ -7,6 +7,7 @@ WORKDIR /root
 RUN apt-get update && apt-get install -y \
   bzip2 \
   patch \
+  unzip \
   libgd-dev \
   libzip-dev \
   libbz2-dev \
@@ -29,13 +30,17 @@ RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
 #RUN docker-php-ext-enable apcu
 
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
-RUN tar -xjf nextcloud-${VERSION}.tar.bz2
+RUN tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/
 RUN rm nextcloud-${VERSION}.tar.bz2
-RUN mv nextcloud /var/www/
-RUN chown -R www-data:www-data /var/www/nextcloud/
 
 COPY password-policy-on-createUser.patch /root/
 RUN patch -d /var/www/nextcloud/ -p 1 < /root/password-policy-on-createUser.patch
+
+RUN curl -s -O https://apps.owncloud.com/CONTENT/content-files/170608-registration.zip
+RUN unzip 170608-registration.zip -d /var/www/nextcloud/apps/
+RUN rm 170608-registration.zip
+
+RUN chown -R www-data:www-data /var/www/nextcloud/
 
 # https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#apache-configuration-label
 COPY nextcloud.conf /etc/apache2/sites-available/
