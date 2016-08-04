@@ -4,6 +4,9 @@ ARG VERSION=9.0.53
 
 WORKDIR /root
 
+# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#additional-apache-configurations
+RUN a2enmod rewrite headers env dir mime
+
 RUN apt-get update && apt-get install -y \
   bzip2 \
   patch \
@@ -17,9 +20,6 @@ RUN apt-get update && apt-get install -y \
 # Cleaning APT
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#additional-apache-configurations
-RUN a2enmod rewrite headers env dir mime
 
 # https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#prerequisites-label
 # Required, Database connectors, Recommended packages
