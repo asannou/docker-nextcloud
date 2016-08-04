@@ -25,8 +25,13 @@ data:
 down:
 	docker rm -f $(PROXY_NAME) $(NAME)
 
-build:
-	docker build -t $(IMAGE) . && docker build -t $(PROXY_IMAGE) proxy
+build: image proxy-image
+
+image:
+	docker build -t $(IMAGE) .
+
+proxy-image:
+	docker build -t $(PROXY_IMAGE) proxy
 
 pull:
 	docker pull $(IMAGE) && docker pull $(PROXY_IMAGE)
