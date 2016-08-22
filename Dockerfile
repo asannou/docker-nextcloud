@@ -8,6 +8,7 @@ WORKDIR /root
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update && apt-get install -y \
+  cron \
   bzip2 \
   patch \
   unzip \
@@ -20,6 +21,8 @@ RUN apt-get update && apt-get install -y \
 # Cleaning APT
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
 # https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#prerequisites-label
 # Required, Database connectors, Recommended packages
@@ -48,5 +51,5 @@ RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled
 
 VOLUME /var/www/nextcloud/data
 
-CMD ["sh", "-c", "chown www-data:root /var/www/nextcloud/config/config.php /var/www/nextcloud/data && apache2-foreground"]
+CMD ["sh", "-c", "cron && chown www-data:root /var/www/nextcloud/config/config.php /var/www/nextcloud/data && apache2-foreground"]
 
