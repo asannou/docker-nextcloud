@@ -51,5 +51,7 @@ RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled
 
 VOLUME /var/www/nextcloud/data
 
-CMD ["sh", "-c", "cron && chown www-data:root /var/www/nextcloud/config/config.php /var/www/nextcloud/data && apache2-foreground"]
+COPY entrypoint.sh /root/
+ENTRYPOINT ["/root/entrypoint.sh"]
+CMD ["apache2-foreground"]
 

@@ -1,1 +1,4 @@
-.gitignore
+config.php
+data
+proxy
+terraform

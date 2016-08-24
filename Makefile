@@ -6,10 +6,7 @@ PORT := 8000
 SHARING_PORT := 80
 ROOT := /var/www/nextcloud
 
-up: proxy-fail2ban web
-
-proxy-fail2ban: proxy
-	docker exec $(PROXY_NAME) service fail2ban start
+up: proxy web
 
 proxy: web
 	docker run -d --cap-add=NET_ADMIN --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
@@ -39,5 +36,5 @@ proxy-image:
 pull:
 	docker pull $(IMAGE) && docker pull $(PROXY_IMAGE)
 
-.PHONY: up proxy-fail2ban proxy web volumes down build image proxy-image pull
+.PHONY: up proxy web volumes down build image proxy-image pull
 
