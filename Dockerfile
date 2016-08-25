@@ -49,8 +49,9 @@ RUN chown -R www-data:www-data /var/www/nextcloud/
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 
-VOLUME /var/www/nextcloud/data
+VOLUME /volume
 
+COPY config.php /root/
 COPY entrypoint.sh /root/
 ENTRYPOINT ["/root/entrypoint.sh"]
 CMD ["apache2-foreground"]
