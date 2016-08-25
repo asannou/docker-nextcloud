@@ -4,23 +4,14 @@ NAME := nextcloud
 PROXY_NAME := nextcloud-proxy
 PORT := 8000
 SHARING_PORT := 80
-ROOT := /var/www/nextcloud
 
 up: proxy web
 
 proxy: web
 	docker run -d --cap-add=NET_ADMIN --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
 
-web: volumes
-	docker run -d --name $(NAME) -v $(CURDIR)/config.php:$(ROOT)/config/config.php -v $(CURDIR)/data:$(ROOT)/data $(IMAGE)
-
-volumes: config.php data
-
-config.php:
-	touch $@
-
-data:
-	mkdir -p $@
+web:
+	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume $(IMAGE)
 
 down:
 	docker rm -f $(PROXY_NAME) $(NAME)
@@ -36,5 +27,5 @@ proxy-image:
 pull:
 	docker pull $(IMAGE) && docker pull $(PROXY_IMAGE)
 
-.PHONY: up proxy web volumes down build image proxy-image pull
+.PHONY: up proxy web down build image proxy-image pull
 

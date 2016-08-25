@@ -5,8 +5,7 @@ services:
     image: asannou/nextcloud
     container_name: nextcloud
     volumes:
-      - ./config.php:/var/www/nextcloud/config/config.php
-      - ./data:/var/www/nextcloud/data
+      - ./volume:/volume
   proxy:
     build: proxy
     image: asannou/nextcloud-sharing-only-proxy
