@@ -9,6 +9,10 @@ variable "vpc_id" {
 #  default = "vpc-deadbeef"
 }
 
+variable "gateway_id" {
+#  default = "igw-deadbeef"
+}
+
 variable "subnet_public" {
 #  default = "172.31.0.0/28"
 }
