@@ -31,6 +31,39 @@ resource "aws_subnet" "private1" {
   }
 }
 
+resource "aws_route_table" "public" {
+  vpc_id = "${var.vpc_id}"
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${var.gateway_id}"
+  }
+  tags {
+    Name = "nextcloud-public"
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  subnet_id = "${aws_subnet.public.id}"
+  route_table_id = "${aws_route_table.public.id}"
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = "${var.vpc_id}"
+  tags {
+    Name = "nextcloud-private"
+  }
+}
+
+resource "aws_route_table_association" "private0" {
+  subnet_id = "${aws_subnet.private0.id}"
+  route_table_id = "${aws_route_table.private.id}"
+}
+
+resource "aws_route_table_association" "private1" {
+  subnet_id = "${aws_subnet.private1.id}"
+  route_table_id = "${aws_route_table.private.id}"
+}
+
 resource "aws_db_subnet_group" "db" {
   name = "nextcloud"
   subnet_ids = [
@@ -264,6 +297,7 @@ resource "aws_security_group_rule" "db-mysql-ingress" {
 
 resource "aws_db_instance" "db" {
   name = "nextcloud"
+  identifier = "nextcloud"
   engine = "mysql"
   engine_version = "${var.db_engine_version}"
   instance_class = "${var.db_instance_class}"
