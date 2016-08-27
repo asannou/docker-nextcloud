@@ -1,5 +1,5 @@
 IMAGE := asannou/nextcloud:strict
-PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy
+PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:strict
 NAME := nextcloud
 PROXY_NAME := nextcloud-proxy
 PORT := 8000
