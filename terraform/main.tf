@@ -323,7 +323,7 @@ resource "aws_instance" "web" {
   associate_public_ip_address = true
   root_block_device = {
     volume_type = "gp2"
-    volume_size = "${var.web_volume_size}"
+    volume_size = 8
   }
   key_name = "${var.web_key_name}"
   vpc_security_group_ids = [
@@ -340,12 +340,42 @@ resource "aws_instance" "web" {
     inline = [
       "sudo yum -y update",
       "sudo yum -y install git docker",
-      "sudo service docker start",
-      "sudo chkconfig docker on"
     ]
   }
   tags {
     Name = "nextcloud-web"
+  }
+}
+
+resource "aws_ebs_volume" "volume" {
+  availability_zone = "${aws_subnet.public.availability_zone}"
+  type = "gp2"
+  size = "${var.volume_size}"
+  tags {
+    Name = "nextcloud"
+  }
+}
+
+resource "aws_volume_attachment" "volume_attachment" {
+  volume_id = "${aws_ebs_volume.volume.id}"
+  instance_id = "${aws_instance.web.id}"
+  device_name = "/dev/xvdh"
+  provisioner "remote-exec" {
+    connection {
+      type = "ssh"
+      user = "ec2-user"
+      host = "${aws_instance.web.public_ip}"
+    }
+    inline = [
+      "sudo mkdir /volume",
+      "sudo mount /dev/xvdh /volume || sudo mkfs -t ext4 /dev/xvdh",
+      "echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' | sudo tee -a /etc/fstab",
+      "sudo mount -a",
+      "sudo service docker start",
+      "sudo chkconfig docker on",
+      "sudo docker run -d --name nextcloud -v /volume:/volume asannou/nextcloud",
+      "sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy",
+    ]
   }
 }
 
