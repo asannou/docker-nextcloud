@@ -296,7 +296,6 @@ resource "aws_security_group_rule" "db-mysql-ingress" {
 }
 
 resource "aws_db_instance" "db" {
-  name = "nextcloud"
   identifier = "nextcloud"
   engine = "mysql"
   engine_version = "${var.db_engine_version}"
