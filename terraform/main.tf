@@ -372,8 +372,8 @@ resource "aws_volume_attachment" "volume_attachment" {
       "sudo mount -a",
       "sudo service docker start",
       "sudo chkconfig docker on",
-      "sudo docker run -d --name nextcloud -v /volume:/volume asannou/nextcloud",
-      "sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy",
+      "sudo docker run -d --name nextcloud -v /volume:/volume asannou/nextcloud:strict",
+      "sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy:strict",
     ]
   }
 }
