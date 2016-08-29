@@ -51,12 +51,12 @@ variable "web_instance_type" {
   default = "t2.micro"
 }
 
-variable "web_volume_size" {
-  default = 100
+variable "web_key_name" {
+  default = "nextcloud"
 }
 
-variable "web_key_name" {
-#  default = "id_rsa"
+variable "volume_size" {
+  default = 100
 }
 
 variable "ssl_certificate_id" {
