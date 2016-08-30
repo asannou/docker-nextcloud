@@ -1,0 +1,1 @@
+0 4 * * * /usr/bin/find /var/www/nextcloud/data/ -regex /var/www/nextcloud/data/[^/]+/files/.* -ctime +30 -delete; /usr/local/bin/php /var/www/nextcloud/occ files:scan --all

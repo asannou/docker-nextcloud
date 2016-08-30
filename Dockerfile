@@ -49,6 +49,9 @@ RUN chown -R www-data:www-data /var/www/nextcloud/
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 
+COPY crontab /root/
+RUN crontab -u www-data /root/crontab
+
 VOLUME /volume
 
 COPY config.php /root/
