@@ -1,3 +1,7 @@
+output "aws.account_id" {
+  value = "${data.aws_caller_identity.aws.account_id}"
+}
+
 output "web.public_ip" {
   value = "${aws_instance.web.public_ip}"
 }
