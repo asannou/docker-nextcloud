@@ -1,7 +1,3 @@
-variable "aws_profile" {
-#  default = "nextcloud"
-}
-
 variable "aws_region" {
   default = "ap-northeast-1"
 }
