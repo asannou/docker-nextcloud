@@ -1,6 +1,3 @@
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-
 variable "aws_region" {
   default = "ap-northeast-1"
 }
@@ -59,7 +56,7 @@ variable "volume_size" {
   default = 100
 }
 
-variable "ssl_certificate_id" {
-#  default = "arn:aws:iam::999999999999:server-certificate/nextcloud"
+variable "server_certificate_name" {
+#  default = "nextcloud"
 }
 
