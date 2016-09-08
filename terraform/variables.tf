@@ -56,7 +56,7 @@ variable "volume_size" {
   default = 100
 }
 
-variable "ssl_certificate_id" {
-#  default = "arn:aws:iam::999999999999:server-certificate/nextcloud"
+variable "server_certificate_name" {
+#  default = "nextcloud"
 }
 

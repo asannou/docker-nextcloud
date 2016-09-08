@@ -389,14 +389,14 @@ resource "aws_elb" "elb" {
     lb_protocol = "https"
     instance_port = 8000
     instance_protocol = "http"
-    ssl_certificate_id = "${var.ssl_certificate_id}"
+    ssl_certificate_id = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
   }
   listener {
     lb_port = 443
     lb_protocol = "https"
     instance_port = 80
     instance_protocol = "http"
-    ssl_certificate_id = "${var.ssl_certificate_id}"
+    ssl_certificate_id = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
   }
   security_groups = [
     "${aws_security_group.elb-internal.id}",
