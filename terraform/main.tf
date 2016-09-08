@@ -415,3 +415,11 @@ resource "aws_elb" "elb" {
   }
 }
 
+resource "aws_s3_bucket" "tfstate" {
+  bucket = "nextcloud-terraform-state.${data.aws_caller_identity.aws.account_id}"
+  acl = "private"
+  tags {
+    Name = "nextcloud-terraform-state"
+  }
+}
+

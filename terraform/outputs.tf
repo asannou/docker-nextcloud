@@ -14,3 +14,7 @@ output "db.endpoint" {
   value = "${aws_db_instance.db.endpoint}"
 }
 
+output "tfstate.bucket" {
+  value = "${aws_s3_bucket.tfstate.bucket}"
+}
+
