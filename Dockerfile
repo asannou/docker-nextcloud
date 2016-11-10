@@ -1,10 +1,10 @@
 FROM php:5.6-apache
 
-ARG VERSION=9.0.53
+ARG VERSION=10.0.1
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update && apt-get install -y \
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#prerequisites-label
+# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#prerequisites
 # Required, Database connectors, Recommended packages
 RUN docker-php-ext-configure gd --with-jpeg-dir --with-png-dir --with-xpm-dir --with-vpx-dir
 RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
@@ -33,7 +33,7 @@ RUN rm nextcloud-${VERSION}.tar.bz2
 RUN mv nextcloud /var/www/
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/9/admin_manual/installation/source_installation.html#apache-configuration-label
+# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 
