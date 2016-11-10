@@ -10,7 +10,6 @@ RUN a2enmod rewrite headers env dir mime
 RUN apt-get update && apt-get install -y \
   cron \
   bzip2 \
-  patch \
   unzip \
   libgd-dev \
   libzip-dev \
@@ -35,9 +34,6 @@ RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
 RUN tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/
 RUN rm nextcloud-${VERSION}.tar.bz2
-
-COPY password-policy-on-createUser.patch /root/
-RUN patch -d /var/www/nextcloud/ -p 1 < /root/password-policy-on-createUser.patch
 
 RUN curl -s -O https://apps.owncloud.com/CONTENT/content-files/170608-registration.zip
 RUN unzip 170608-registration.zip -d /var/www/nextcloud/apps/
