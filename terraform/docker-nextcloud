@@ -41,7 +41,7 @@ stop() {
 }
 
 status() {
-    $exec ps --filter="name=nextcloud" --format="{{.Names}} (id {{.ID}}) is running..."
+    $exec ps --filter="name=$name" --format="{{.Names}} (id {{.ID}}) is running..."
 }
 
 restart() {
