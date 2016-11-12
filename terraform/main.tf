@@ -310,6 +310,12 @@ resource "aws_db_instance" "db" {
   parameter_group_name = "default.mysql5.6"
   backup_retention_period = 7
   auto_minor_version_upgrade = true
+  lifecycle {
+    ignore_changes = [
+      "username",
+      "password"
+    ]
+  }
   tags {
     Name = "nextcloud-db"
   }

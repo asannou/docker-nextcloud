@@ -37,8 +37,13 @@ variable "db_allocated_storage" {
   default = 10
 }
 
-variable "db_username" {}
-variable "db_password" {}
+variable "db_username" {
+  default = ""
+}
+
+variable "db_password" {
+  default = ""
+}
 
 variable "web_instance_type" {
   default = "t2.micro"
