@@ -331,14 +331,26 @@ resource "aws_instance" "web" {
     "${aws_security_group.web-internal.id}",
     "${aws_security_group.web-external.id}",
   ]
+  provisioner "file" {
+    source = "docker-nextcloud"
+    destination = "/home/ec2-user/docker-nextcloud"
+    connection {
+      type = "ssh"
+      user = "ec2-user"
+    }
+  }
   provisioner "remote-exec" {
     connection {
       type = "ssh"
       user = "ec2-user"
     }
     inline = [
-      "sudo yum -y update",
-      "sudo yum -y install git docker",
+      "sudo yum -y -q update",
+      "sudo yum -y -q install git docker",
+      "sudo service docker start",
+      "sudo chkconfig docker on",
+      "sudo chmod +x /home/ec2-user/docker-nextcloud",
+      "sudo cp /home/ec2-user/docker-nextcloud /etc/rc.d/init.d/",
     ]
   }
   tags {
@@ -359,6 +371,7 @@ resource "aws_volume_attachment" "volume_attachment" {
   volume_id = "${aws_ebs_volume.volume.id}"
   instance_id = "${aws_instance.web.id}"
   device_name = "/dev/xvdh"
+  skip_destroy = true
   provisioner "remote-exec" {
     connection {
       type = "ssh"
@@ -370,10 +383,9 @@ resource "aws_volume_attachment" "volume_attachment" {
       "sudo mount /dev/xvdh /volume || sudo mkfs -t ext4 /dev/xvdh",
       "echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' | sudo tee -a /etc/fstab",
       "sudo mount -a",
-      "sudo service docker start",
-      "sudo chkconfig docker on",
-      "sudo docker run -d --name nextcloud -v /volume:/volume asannou/nextcloud",
-      "sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy",
+      "sudo service docker-nextcloud run",
+      "sudo chkconfig docker-nextcloud on",
+      "sudo reboot",
     ]
   }
 }
