@@ -40,6 +40,10 @@ stop() {
     $exec stop $proxyname $name
 }
 
+status() {
+    $exec ps --filter="name=$name" --format="{{.Names}} (id {{.ID}}) is running..."
+}
+
 restart() {
     stop
     start
@@ -59,6 +63,9 @@ case "$1" in
         $1
         ;;
     stop)
+        $1
+        ;;
+    status)
         $1
         ;;
     restart)
