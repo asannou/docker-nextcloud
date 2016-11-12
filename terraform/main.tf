@@ -371,7 +371,7 @@ resource "aws_instance" "web" {
     }
     inline = [
       "sudo yum -y -q update",
-      "sudo yum -y -q install git docker",
+      "sudo yum -y -q install docker",
       "sudo service docker start",
       "sudo chkconfig docker on",
       "sudo chmod +x /home/ec2-user/docker-nextcloud",
