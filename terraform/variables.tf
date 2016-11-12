@@ -40,10 +40,6 @@ variable "db_allocated_storage" {
 variable "db_username" {}
 variable "db_password" {}
 
-variable "web_ami" {
-  default = "ami-374db956"
-}
-
 variable "web_instance_type" {
   default = "t2.micro"
 }

@@ -315,8 +315,33 @@ resource "aws_db_instance" "db" {
   }
 }
 
+data "aws_ami" "ami" {
+  most_recent = true
+  owners = ["amazon"]
+  filter {
+    name = "architecture"
+    values = ["x86_64"]
+  }
+  filter {
+    name = "root-device-type"
+    values = ["ebs"]
+  }
+  filter {
+    name = "name"
+    values = ["amzn-ami-hvm-*"]
+  }
+  filter {
+    name = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name = "block-device-mapping.volume-type"
+    values = ["gp2"]
+  }
+}
+
 resource "aws_instance" "web" {
-  ami = "${var.web_ami}"
+  ami = "${data.aws_ami.ami.id}"
   instance_type = "${var.web_instance_type}"
   subnet_id = "${aws_subnet.public.id}"
   associate_public_ip_address = true
