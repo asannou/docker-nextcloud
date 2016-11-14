@@ -45,12 +45,12 @@ variable "db_password" {
   default = ""
 }
 
-variable "web_instance_type" {
-  default = "t2.micro"
+variable "key_file_name" {
+  default = "id_nextcloud"
 }
 
-variable "web_key_name" {
-  default = "nextcloud"
+variable "web_instance_type" {
+  default = "t2.micro"
 }
 
 variable "volume_size" {

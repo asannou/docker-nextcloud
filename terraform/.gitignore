@@ -1,3 +1,5 @@
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+id_nextcloud
+id_nextcloud.pub
