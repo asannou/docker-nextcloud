@@ -1,3 +1,8 @@
+resource "aws_key_pair" "key" {
+  key_name = "nextcloud"
+  public_key = "${file("${var.key_file_name}.pub")}"
+}
+
 resource "aws_security_group" "elb-internal" {
   name = "nextcloud-elb-internal"
   vpc_id = "${var.vpc_id}"
@@ -152,7 +157,7 @@ resource "aws_instance" "web" {
     volume_type = "gp2"
     volume_size = 8
   }
-  key_name = "${var.web_key_name}"
+  key_name = "${aws_key_pair.key.key_name}"
   vpc_security_group_ids = [
     "${aws_security_group.web-all.id}",
     "${aws_security_group.web-ssh.id}",
@@ -165,12 +170,14 @@ resource "aws_instance" "web" {
     connection {
       type = "ssh"
       user = "ec2-user"
+      private_key = "${file("${var.key_file_name}")}"
     }
   }
   provisioner "remote-exec" {
     connection {
       type = "ssh"
       user = "ec2-user"
+      private_key = "${file("${var.key_file_name}")}"
     }
     inline = [
       "sudo yum -y -q update",
@@ -205,6 +212,7 @@ resource "aws_volume_attachment" "volume_attachment" {
       type = "ssh"
       user = "ec2-user"
       host = "${aws_instance.web.public_ip}"
+      private_key = "${file("${var.key_file_name}")}"
     }
     inline = [
       "sudo mkdir /volume",
