@@ -11,5 +11,5 @@ COPY fail2ban/jail.conf /etc/fail2ban/
 
 EXPOSE 80 8000
 
-CMD ["sh", "-c", "service fail2ban start && nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "service fail2ban force-start && nginx -g 'daemon off;'"]
 
