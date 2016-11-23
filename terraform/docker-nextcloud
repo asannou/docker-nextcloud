@@ -28,7 +28,7 @@ name="nextcloud"
 proxyname="nextcloud-proxy"
 image="asannou/nextcloud"
 proxyimage="asannou/nextcloud-sharing-only-proxy"
-valume="/volume"
+volume="/volume"
 port="80"
 internalport="8000"
 
@@ -50,7 +50,7 @@ restart() {
 }
 
 run() {
-    $exec run -d --name $name -v $valume:/volume $image > /dev/null
+    $exec run -d --name $name -v $volume:/volume $image > /dev/null
     $exec run -d --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
 }
 
