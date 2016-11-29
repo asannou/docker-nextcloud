@@ -173,6 +173,15 @@ resource "aws_instance" "web" {
       private_key = "${file("${var.key_file_name}")}"
     }
   }
+  provisioner "file" {
+    source = "docker-nextcloud.cron"
+    destination = "/home/ec2-user/docker-nextcloud.cron"
+    connection {
+      type = "ssh"
+      user = "ec2-user"
+      private_key = "${file("${var.key_file_name}")}"
+    }
+  }
   provisioner "remote-exec" {
     connection {
       type = "ssh"
@@ -181,11 +190,12 @@ resource "aws_instance" "web" {
     }
     inline = [
       "sudo yum -y -q update",
-      "sudo yum -y -q install docker",
+      "sudo yum -y -q install yum-cron-security docker",
       "sudo service docker start",
       "sudo chkconfig docker on",
-      "sudo chmod +x /home/ec2-user/docker-nextcloud",
+      "sudo chmod +x /home/ec2-user/docker-nextcloud /home/ec2-user/docker-nextcloud.cron",
       "sudo cp /home/ec2-user/docker-nextcloud /etc/rc.d/init.d/",
+      "sudo cp /home/ec2-user/docker-nextcloud.cron /etc/cron.daily/",
     ]
   }
   tags {

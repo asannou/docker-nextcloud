@@ -50,12 +50,26 @@ restart() {
 }
 
 run() {
-    $exec run -d --name $name -v $volume:/volume $image > /dev/null
-    $exec run -d --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
+    $exec run -d --log-driver=syslog --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
 }
 
 rm() {
     $exec rm -f $proxyname $name
+}
+
+pull() {
+    $exec pull $image > /dev/null
+    $exec pull $proxyimage > /dev/null
+}
+
+update() {
+    pull
+    [ "$($exec inspect --format='{{.Id}}' --type=image $image)" = "$($exec inspect --format='{{.Image}}' --type=container $name)" ] &&
+    [ "$($exec inspect --format='{{.Id}}' --type=image $proxyimage)" = "$($exec inspect --format='{{.Image}}' --type=container $proxyname)" ] && return
+    stop
+    rm
+    run
 }
 
 case "$1" in
@@ -77,8 +91,14 @@ case "$1" in
     rm)
         $1
         ;;
+    pull)
+        $1
+        ;;
+    update)
+        $1
+        ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|run|rm}"
+        echo $"Usage: $0 {start|stop|status|restart|run|rm|pull|update}"
         exit 2
 esac
 
