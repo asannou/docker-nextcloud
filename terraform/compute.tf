@@ -191,8 +191,9 @@ resource "aws_instance" "web" {
     inline = [
       "sudo yum -y -q update",
       "sudo yum -y -q install yum-cron-security docker",
-      "sudo service docker start",
+      "sudo chkconfig yum-cron on",
       "sudo chkconfig docker on",
+      "sudo service docker start",
       "sudo chmod +x /home/ec2-user/docker-nextcloud /home/ec2-user/docker-nextcloud.cron",
       "sudo cp /home/ec2-user/docker-nextcloud /etc/rc.d/init.d/",
       "sudo cp /home/ec2-user/docker-nextcloud.cron /etc/cron.daily/",
