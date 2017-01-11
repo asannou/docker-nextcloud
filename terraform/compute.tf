@@ -165,6 +165,15 @@ resource "aws_instance" "web" {
     "${aws_security_group.web-external.id}",
   ]
   provisioner "file" {
+    source = "install.sh"
+    destination = "/home/ec2-user/install.sh"
+    connection {
+      type = "ssh"
+      user = "ec2-user"
+      private_key = "${file("${var.key_file_name}")}"
+    }
+  }
+  provisioner "file" {
     source = "docker-nextcloud"
     destination = "/home/ec2-user/docker-nextcloud"
     connection {
@@ -172,21 +181,6 @@ resource "aws_instance" "web" {
       user = "ec2-user"
       private_key = "${file("${var.key_file_name}")}"
     }
-  }
-  provisioner "remote-exec" {
-    connection {
-      type = "ssh"
-      user = "ec2-user"
-      private_key = "${file("${var.key_file_name}")}"
-    }
-    inline = [
-      "sudo yum -y -q update",
-      "sudo yum -y -q install docker",
-      "sudo service docker start",
-      "sudo chkconfig docker on",
-      "sudo chmod +x /home/ec2-user/docker-nextcloud",
-      "sudo cp /home/ec2-user/docker-nextcloud /etc/rc.d/init.d/",
-    ]
   }
   tags {
     Name = "nextcloud-web"
@@ -214,15 +208,7 @@ resource "aws_volume_attachment" "volume_attachment" {
       host = "${aws_instance.web.public_ip}"
       private_key = "${file("${var.key_file_name}")}"
     }
-    inline = [
-      "sudo mkdir /volume",
-      "sudo mount /dev/xvdh /volume || sudo mkfs -t ext4 /dev/xvdh",
-      "echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' | sudo tee -a /etc/fstab",
-      "sudo mount -a",
-      "sudo service docker-nextcloud run",
-      "sudo chkconfig docker-nextcloud on",
-      "sudo reboot",
-    ]
+    inline = "sudo sh /home/ec2-user/install.sh"
   }
 }
 
