@@ -182,22 +182,14 @@ resource "aws_instance" "web" {
       private_key = "${file("${var.key_file_name}")}"
     }
   }
-  provisioner "remote-exec" {
+  provisioner "file" {
+    source = "install.sh"
+    destination = "/home/ec2-user/install.sh"
     connection {
       type = "ssh"
       user = "ec2-user"
       private_key = "${file("${var.key_file_name}")}"
     }
-    inline = [
-      "sudo yum -y -q update",
-      "sudo yum -y -q install yum-cron-security docker",
-      "sudo chkconfig yum-cron on",
-      "sudo chkconfig docker on",
-      "sudo service docker start",
-      "sudo chmod +x /home/ec2-user/docker-nextcloud /home/ec2-user/docker-nextcloud.cron",
-      "sudo cp /home/ec2-user/docker-nextcloud /etc/rc.d/init.d/",
-      "sudo cp /home/ec2-user/docker-nextcloud.cron /etc/cron.daily/",
-    ]
   }
   tags {
     Name = "nextcloud-web"
@@ -225,15 +217,7 @@ resource "aws_volume_attachment" "volume_attachment" {
       host = "${aws_instance.web.public_ip}"
       private_key = "${file("${var.key_file_name}")}"
     }
-    inline = [
-      "sudo mkdir /volume",
-      "sudo mount /dev/xvdh /volume || sudo mkfs -t ext4 /dev/xvdh",
-      "echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' | sudo tee -a /etc/fstab",
-      "sudo mount -a",
-      "sudo service docker-nextcloud run",
-      "sudo chkconfig docker-nextcloud on",
-      "sudo reboot",
-    ]
+    inline = "sudo sh /home/ec2-user/install.sh"
   }
 }
 
