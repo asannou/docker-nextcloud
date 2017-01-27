@@ -164,27 +164,13 @@ resource "aws_instance" "web" {
     "${aws_security_group.web-internal.id}",
     "${aws_security_group.web-external.id}",
   ]
+  user_data = <<EOD
+#cloud-config
+timezone: "${var.web_instance_timezone}"
+EOD
   provisioner "file" {
-    source = "docker-nextcloud"
-    destination = "/home/ec2-user/docker-nextcloud"
-    connection {
-      type = "ssh"
-      user = "ec2-user"
-      private_key = "${file("${var.key_file_name}")}"
-    }
-  }
-  provisioner "file" {
-    source = "docker-nextcloud.cron"
-    destination = "/home/ec2-user/docker-nextcloud.cron"
-    connection {
-      type = "ssh"
-      user = "ec2-user"
-      private_key = "${file("${var.key_file_name}")}"
-    }
-  }
-  provisioner "file" {
-    source = "install.sh"
-    destination = "/home/ec2-user/install.sh"
+    source = "files/"
+    destination = "/home/ec2-user"
     connection {
       type = "ssh"
       user = "ec2-user"
