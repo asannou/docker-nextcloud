@@ -9,8 +9,7 @@ yum -y -q install docker
 chkconfig docker on
 service docker start
 
-chmod +x docker-nextcloud
-cp docker-nextcloud /etc/rc.d/init.d/
+install -o root -g root -m 0700 docker-nextcloud /etc/rc.d/init.d/
 chkconfig docker-nextcloud on
 service docker-nextcloud run
 
