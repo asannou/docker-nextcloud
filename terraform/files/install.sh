@@ -12,7 +12,7 @@ chkconfig docker on
 service docker start
 
 install -o root -g root -m 0700 docker-nextcloud /etc/rc.d/init.d/
-install -o root -g root -m 0700 docker-nextcloud.cron /etc/cron.daily/
+install -o root -g root -m 0700 docker-nextcloud.cron 1post-yum-security.cron /etc/cron.daily/
 chkconfig docker-nextcloud on
 service docker-nextcloud run
 
