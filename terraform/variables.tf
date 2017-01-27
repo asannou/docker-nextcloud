@@ -53,6 +53,10 @@ variable "web_instance_type" {
   default = "t2.micro"
 }
 
+variable "web_instance_timezone" {
+  default = "Asia/Tokyo"
+}
+
 variable "volume_size" {
   default = 100
 }
