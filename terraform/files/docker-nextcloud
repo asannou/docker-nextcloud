@@ -50,8 +50,8 @@ restart() {
 }
 
 run() {
-    $exec run -d --name $name -v $volume:/volume $image > /dev/null
-    $exec run -d --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
+    $exec run -d --log-driver=syslog --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
 }
 
 rm() {
