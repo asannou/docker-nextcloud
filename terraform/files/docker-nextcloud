@@ -32,8 +32,13 @@ volume="/volume"
 port="80"
 internalport="8000"
 
+run() {
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
+    $exec run -d --log-driver=syslog --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
+}
+
 start() {
-    $exec start $name $proxyname
+    $exec start $name $proxyname || run
 }
 
 stop() {
@@ -47,11 +52,6 @@ status() {
 restart() {
     stop
     start
-}
-
-run() {
-    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
-    $exec run -d --log-driver=syslog --cap-add=NET_ADMIN --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
 }
 
 rm() {
