@@ -11,6 +11,5 @@ service docker start
 
 install -o root -g root -m 0700 docker-nextcloud /etc/rc.d/init.d/
 chkconfig docker-nextcloud on
-service docker-nextcloud run
 
 reboot
