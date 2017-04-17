@@ -1,14 +1,14 @@
+terraform {
+  backend "s3" {
+#    bucket = "nextcloud-terraform-state.123456789012"
+    key    = "terraform.tfstate"
+#    region = "ap-northeast-1"
+  }
+}
+
 provider "aws" {
   region = "${var.aws_region}"
 }
 
 data "aws_caller_identity" "aws" {}
-
-resource "aws_s3_bucket" "tfstate" {
-  bucket = "nextcloud-terraform-state.${data.aws_caller_identity.aws.account_id}"
-  acl = "private"
-  tags {
-    Name = "nextcloud-terraform-state"
-  }
-}
 
