@@ -22,7 +22,9 @@ variable "subnet_private" {
 }
 
 variable "cidr_internal" {
-#  default = "203.0.113.1/32"
+  default = [
+#    "203.0.113.1/32"
+  ]
 }
 
 variable "db_engine_version" {

@@ -17,7 +17,7 @@ resource "aws_security_group_rule" "elb-internal-ingress" {
   protocol = "tcp"
   from_port = 8000
   to_port = 8000
-  cidr_blocks = ["${var.cidr_internal}"]
+  cidr_blocks = "${var.cidr_internal}"
 }
 
 resource "aws_security_group_rule" "elb-internal-egress" {
@@ -103,7 +103,7 @@ resource "aws_security_group_rule" "web-ssh-ingress" {
   protocol = "tcp"
   from_port = 22
   to_port = 22
-  cidr_blocks = ["${var.cidr_internal}"]
+  cidr_blocks = "${var.cidr_internal}"
 }
 
 resource "aws_security_group" "web-all" {

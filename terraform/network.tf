@@ -78,7 +78,7 @@ resource "aws_network_acl" "acl-public" {
     protocol = "tcp"
     from_port = 22
     to_port = 22
-    cidr_block = "${var.cidr_internal}"
+    cidr_block =  "0.0.0.0/0"
   }
   ingress {
     rule_no = 110
@@ -86,7 +86,7 @@ resource "aws_network_acl" "acl-public" {
     protocol = "tcp"
     from_port = 8000
     to_port = 8000
-    cidr_block = "${var.cidr_internal}"
+    cidr_block =  "0.0.0.0/0"
   }
   ingress {
     rule_no = 120
