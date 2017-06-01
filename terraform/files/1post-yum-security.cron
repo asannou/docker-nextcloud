@@ -1,3 +1,9 @@
 #!/bin/bash
-/etc/rc.d/init.d/docker-nextcloud start
-/sbin/grubby --default-kernel | /bin/grep -q "$(/bin/uname -r)" || /sbin/reboot
+
+if /sbin/grubby --default-kernel | /bin/grep -q "$(/bin/uname -r)"
+then
+  /etc/rc.d/init.d/docker-nextcloud start
+else
+  /sbin/reboot
+fi
+
