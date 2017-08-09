@@ -177,6 +177,7 @@ EOD
       private_key = "${file("${var.key_file_name}")}"
     }
   }
+  iam_instance_profile = "${aws_iam_instance_profile.nextcloud.name}"
   tags {
     Name = "nextcloud-web"
   }

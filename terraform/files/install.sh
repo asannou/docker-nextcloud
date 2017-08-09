@@ -4,7 +4,9 @@ echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' >> /etc/fstab
 mount -a
 
 yum -y -q update
-yum -y -q install docker
+yum -y -q install amazon-ssm-agent docker
+
+start amazon-ssm-agent
 
 chkconfig docker on
 service docker start
