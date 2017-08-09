@@ -4,7 +4,9 @@ echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' >> /etc/fstab
 mount -a
 
 yum -y -q update
-yum -y -q install yum-cron-security docker
+yum -y -q install amazon-ssm-agent yum-cron-security docker
+
+start amazon-ssm-agent
 
 chkconfig yum-cron on
 
