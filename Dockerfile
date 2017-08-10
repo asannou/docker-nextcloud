@@ -1,16 +1,15 @@
 FROM php:5.6-apache
 
-ARG VERSION=10.0.3
+ARG VERSION=11.0.4
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update && apt-get install -y \
   cron \
   bzip2 \
-  unzip \
   libgd-dev \
   libzip-dev \
   libbz2-dev \
@@ -23,7 +22,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
-# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#prerequisites
+# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#prerequisites
 # Required, Database connectors, Recommended packages
 RUN docker-php-ext-configure gd --with-jpeg-dir --with-png-dir --with-xpm-dir --with-vpx-dir
 RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
@@ -35,13 +34,13 @@ RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSIO
 RUN tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/
 RUN rm nextcloud-${VERSION}.tar.bz2
 
-RUN curl -s -O https://apps.owncloud.com/CONTENT/content-files/170608-registration.zip
-RUN unzip 170608-registration.zip -d /var/www/nextcloud/apps/
-RUN rm 170608-registration.zip
+RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.2.5/registration.tar.gz
+RUN tar -zxf registration.tar.gz -C /var/www/nextcloud/apps/
+RUN rm registration.tar.gz
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/10/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 

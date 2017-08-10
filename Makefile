@@ -1,4 +1,4 @@
-IMAGE := asannou/nextcloud:strict
+IMAGE := asannou/nextcloud:11-strict
 PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:strict
 NAME := nextcloud
 PROXY_NAME := nextcloud-proxy
