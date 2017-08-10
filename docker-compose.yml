@@ -2,7 +2,7 @@ version: '2'
 services:
   nextcloud:
     build: .
-    image: asannou/nextcloud:11
+    image: asannou/nextcloud:12
     container_name: nextcloud
     volumes:
       - ./volume:/volume
