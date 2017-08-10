@@ -1,10 +1,10 @@
 FROM php:5.6-apache
 
-ARG VERSION=11.0.4
+ARG VERSION=12.0.1
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update && apt-get install -y \
@@ -22,7 +22,7 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
-# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#prerequisites
+# https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN docker-php-ext-configure gd --with-jpeg-dir --with-png-dir --with-xpm-dir --with-vpx-dir
 RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
@@ -40,7 +40,7 @@ RUN rm registration.tar.gz
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/11/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
 
