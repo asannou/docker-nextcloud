@@ -10,6 +10,7 @@ RUN a2enmod rewrite headers env dir mime
 RUN apt-get update && apt-get install -y \
   cron \
   bzip2 \
+  unzip \
   libgd-dev \
   libzip-dev \
   libbz2-dev \
@@ -39,6 +40,11 @@ RUN rm nextcloud-${VERSION}.tar.bz2
 RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.2.5/registration.tar.gz
 RUN tar -zxf registration.tar.gz -C /var/www/nextcloud/apps/
 RUN rm registration.tar.gz
+
+RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN unzip 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN mv user_saml-483a65126e7380082eb1a6d2d83f7e19cb4d60ec /var/www/nextcloud/apps/user_saml
+RUN rm 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
