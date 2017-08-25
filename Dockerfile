@@ -9,6 +9,7 @@ RUN a2enmod rewrite headers env dir mime
 
 RUN apt-get update && apt-get install -y \
   bzip2 \
+  unzip \
   libgd-dev \
   libzip-dev \
   libbz2-dev \
@@ -30,9 +31,14 @@ RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
-RUN tar -xjf nextcloud-${VERSION}.tar.bz2
+RUN tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/
 RUN rm nextcloud-${VERSION}.tar.bz2
-RUN mv nextcloud /var/www/
+
+RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN unzip 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN mv user_saml-483a65126e7380082eb1a6d2d83f7e19cb4d60ec /var/www/nextcloud/apps/user_saml
+RUN rm 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#apache-web-server-configuration
