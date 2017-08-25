@@ -1,6 +1,6 @@
 FROM php:5.6-apache
 
-ARG VERSION=12.0.1
+ARG VERSION=12.0.2
 
 WORKDIR /root
 
