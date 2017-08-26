@@ -31,6 +31,9 @@ RUN docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt
 #RUN yes '' | pecl install apcu-4.0.11
 #RUN docker-php-ext-enable apcu
 
+RUN docker-php-ext-install opcache
+COPY php-opcache.ini /usr/local/etc/php/conf.d/
+
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
