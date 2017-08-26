@@ -1,24 +1,21 @@
 FROM php:5.6-apache
 
-ARG VERSION=12.0.2
-
 WORKDIR /root
 
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
-RUN apt-get update && apt-get install -y \
-  bzip2 \
-  unzip \
-  libgd-dev \
-  libzip-dev \
-  libbz2-dev \
-  libicu-dev \
-  libmcrypt-dev
-
-# Cleaning APT
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update \
+  && apt-get install -y \
+    bzip2 \
+    unzip \
+    libgd-dev \
+    libzip-dev \
+    libbz2-dev \
+    libicu-dev \
+    libmcrypt-dev \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
@@ -33,14 +30,16 @@ COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2
-RUN tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/
-RUN rm nextcloud-${VERSION}.tar.bz2
+ARG VERSION=12.0.2
 
-RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
-RUN unzip 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
-RUN mv user_saml-483a65126e7380082eb1a6d2d83f7e19cb4d60ec /var/www/nextcloud/apps/user_saml
-RUN rm 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
+  && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
+  && rm nextcloud-${VERSION}.tar.bz2
+
+RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip \
+  && unzip 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip \
+  && mv user_saml-483a65126e7380082eb1a6d2d83f7e19cb4d60ec /var/www/nextcloud/apps/user_saml \
+  && rm 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
