@@ -8,7 +8,7 @@ services:
       - ./volume:/volume
   proxy:
     build: proxy
-    image: asannou/nextcloud-sharing-only-proxy:strict
+    image: asannou/nextcloud-sharing-only-proxy:12-strict
     container_name: nextcloud-proxy
     ports:
       - '80:80'
