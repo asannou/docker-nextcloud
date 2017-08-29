@@ -3,7 +3,7 @@ FROM php:5.6-apache
 WORKDIR /root
 
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#additional-apache-configurations
-RUN a2enmod rewrite headers env dir mime
+RUN a2enmod rewrite headers env dir mime remoteip
 
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
