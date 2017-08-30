@@ -27,10 +27,10 @@ RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSIO
   && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
   && rm nextcloud-${VERSION}.tar.bz2
 
-RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip \
-  && unzip 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip \
-  && mv user_saml-483a65126e7380082eb1a6d2d83f7e19cb4d60ec /var/www/nextcloud/apps/user_saml \
-  && rm 483a65126e7380082eb1a6d2d83f7e19cb4d60ec.zip
+RUN curl -s -L -O https://github.com/asannou/user_saml/archive/docker.zip \
+  && unzip docker.zip \
+  && mv user_saml-docker /var/www/nextcloud/apps/user_saml \
+  && rm docker.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
