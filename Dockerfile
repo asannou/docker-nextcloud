@@ -8,7 +8,7 @@ RUN a2enmod rewrite headers env dir mime remoteip
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
-  && apt-get install -y bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev libicu52 libmcrypt-dev libmcrypt4 \
+  && apt-get install -y bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev libmcrypt-dev libmcrypt4 \
   && docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt opcache \
   && apt-get remove -y libpng-dev libicu-dev libmcrypt-dev \
   && apt-get clean \
