@@ -8,7 +8,7 @@ RUN a2enmod rewrite headers env dir mime remoteip
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
-  && apt-get install -y cron bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev libicu52 libmcrypt-dev libmcrypt4 \
+  && apt-get install -y cron bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev libmcrypt-dev libmcrypt4 \
   && docker-php-ext-install gd zip pdo_mysql bz2 intl mcrypt opcache \
   && apt-get remove -y libpng-dev libicu-dev libmcrypt-dev \
   && apt-get clean \
@@ -33,10 +33,10 @@ RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.
   && tar -zxf registration.tar.gz -C /var/www/nextcloud/apps/ \
   && rm registration.tar.gz
 
-RUN curl -s -L -O https://github.com/asannou/user_saml/archive/docker.zip \
-  && unzip docker.zip \
-  && mv user_saml-docker /var/www/nextcloud/apps/user_saml \
-  && rm docker.zip
+RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/v1.5.0.zip \
+  && unzip v1.5.0.zip \
+  && mv user_saml-1.5.0 /var/www/nextcloud/apps/user_saml \
+  && rm v1.5.0.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
