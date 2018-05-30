@@ -27,10 +27,10 @@ RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSIO
   && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
   && rm nextcloud-${VERSION}.tar.bz2
 
-RUN curl -s -L -O https://github.com/nextcloud/user_saml/archive/v1.5.0.zip \
-  && unzip v1.5.0.zip \
-  && mv user_saml-1.5.0 /var/www/nextcloud/apps/user_saml \
-  && rm v1.5.0.zip
+RUN curl -s -L -O https://github.com/asannou/user_saml/archive/deactivate-session.zip \
+  && unzip deactivate-session.zip \
+  && mv user_saml-deactivate-session /var/www/nextcloud/apps/user_saml \
+  && rm deactivate-session.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
