@@ -28,7 +28,7 @@ variable "cidr_internal" {
 }
 
 variable "db_engine_version" {
-  default = "5.6.29"
+  default = "5.6.39"
 }
 
 variable "db_instance_class" {
