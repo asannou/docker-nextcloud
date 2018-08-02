@@ -178,6 +178,11 @@ EOD
     }
   }
   iam_instance_profile = "${aws_iam_instance_profile.nextcloud.name}"
+  lifecycle {
+    ignore_changes = [
+      "ami"
+    ]
+  }
   tags {
     Name = "nextcloud-web"
   }
