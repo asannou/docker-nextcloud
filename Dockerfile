@@ -33,10 +33,10 @@ RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.
   && tar -zxf registration.tar.gz -C /var/www/nextcloud/apps/ \
   && rm registration.tar.gz
 
-RUN curl -s -L -O https://github.com/asannou/user_saml/archive/deactivate-session.zip \
-  && unzip deactivate-session.zip \
-  && mv user_saml-deactivate-session /var/www/nextcloud/apps/user_saml \
-  && rm deactivate-session.zip
+RUN curl -s -L -O https://github.com/asannou/user_saml/archive/csrf.zip \
+  && unzip csrf.zip \
+  && mv user_saml-csrf /var/www/nextcloud/apps/user_saml \
+  && rm csrf.zip
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
