@@ -23,7 +23,7 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-ARG VERSION=12.0.2
+ARG VERSION=12.0.3
 
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
   && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
