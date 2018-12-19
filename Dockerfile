@@ -22,6 +22,7 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
+COPY php-upload-tmp-dir.ini /usr/local/etc/php/conf.d/
 
 ARG VERSION=12.0.11
 
@@ -43,6 +44,10 @@ RUN chown -R www-data:www-data /var/www/nextcloud/
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
+
+# https://docs.nextcloud.com/server/12/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
+RUN sed -i -E 's/(php_value upload_max_filesize ).*/\116G/g; s/(php_value post_max_size ).*/\116G/g' /var/www/nextcloud/.htaccess
+RUN sed -i -E 's/(upload_max_filesize=).*/\116G/g; s/(post_max_size=).*/\116G/g' /var/www/nextcloud/.user.ini
 
 COPY crontab /root/
 RUN crontab -u www-data /root/crontab

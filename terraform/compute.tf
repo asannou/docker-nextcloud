@@ -218,7 +218,7 @@ resource "aws_elb" "elb" {
   subnets = ["${aws_subnet.public.id}"]
   instances = ["${aws_instance.web.id}"]
   cross_zone_load_balancing = true
-  idle_timeout = 60
+  idle_timeout = 3600
   listener {
     lb_port = 8000
     lb_protocol = "https"
