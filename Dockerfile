@@ -5,7 +5,7 @@ WORKDIR /root
 # https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime remoteip
 
-# https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/13/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
   && apt-get install -y bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev libmcrypt-dev libmcrypt4 \
@@ -21,7 +21,7 @@ RUN apt-get update \
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-ARG VERSION=12.0.11
+ARG VERSION=13.0.8
 
 RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
   && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
@@ -34,9 +34,9 @@ RUN curl -s -L -O https://github.com/asannou/user_saml/archive/deactivate-sessio
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/13/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
-RUN ln -s /etc/apache2/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
+RUN a2ensite nextcloud.conf
 
 VOLUME /volume
 
