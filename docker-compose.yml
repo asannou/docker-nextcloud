@@ -2,13 +2,13 @@ version: '2'
 services:
   nextcloud:
     build: .
-    image: asannou/nextcloud:13-strict
+    image: asannou/nextcloud:14-strict
     container_name: nextcloud
     volumes:
       - ./volume:/volume
   proxy:
     build: proxy
-    image: asannou/nextcloud-sharing-only-proxy:13-strict
+    image: asannou/nextcloud-sharing-only-proxy:14-strict
     container_name: nextcloud-proxy
     ports:
       - '80:80'
