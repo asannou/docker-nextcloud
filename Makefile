@@ -1,5 +1,5 @@
-IMAGE := asannou/nextcloud:13-bigfile
-PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:13-bigfile
+IMAGE := asannou/nextcloud:14-bigfile
+PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:14-bigfile
 NAME := nextcloud
 PROXY_NAME := nextcloud-proxy
 PORT := 8000
