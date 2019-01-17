@@ -17,5 +17,5 @@ occ() {
   su - -s /bin/sh -c "/usr/local/bin/php /var/www/nextcloud/occ $args" www-data
 }
 
-occ status | grep -q '\- installed: true' && occ upgrade --no-app-disable --no-interaction
+occ status | grep -q '\- installed: true' && occ upgrade --no-interaction
 exec "$@"
