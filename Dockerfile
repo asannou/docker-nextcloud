@@ -23,14 +23,13 @@ COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
 ARG VERSION=14.0.6
 
-RUN curl -s -O https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
-  && tar -xjf nextcloud-${VERSION}.tar.bz2 -C /var/www/ \
-  && rm nextcloud-${VERSION}.tar.bz2
+RUN curl -s -o nextcloud.tar.bz2 https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
+  && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
+  && rm nextcloud.tar.bz2
 
-RUN curl -s -L -O https://github.com/asannou/user_saml/archive/deactivate-session.zip \
-  && unzip deactivate-session.zip \
-  && mv user_saml-deactivate-session /var/www/nextcloud/apps/user_saml \
-  && rm deactivate-session.zip
+RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v2.1.0/user_saml-2.1.0.tar.gz \
+  && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
+  && rm user_saml.tar.gz
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
