@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.2-apache
 
 WORKDIR /root
 
@@ -36,6 +36,8 @@ RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.
 RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v2.1.0/user_saml-2.1.0.tar.gz \
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
   && rm user_saml.tar.gz
+
+RUN curl -s https://github.com/asannou/user_saml/commit/476e66589f845a2eb6890f83e8427e4c488cd06d.patch | patch -d /var/www/nextcloud/apps/user_saml -p 1
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
