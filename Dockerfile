@@ -2,15 +2,16 @@ FROM php:7.2-apache
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/14/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime remoteip
 
-# https://docs.nextcloud.com/server/14/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
-  && apt-get install -y bzip2 unzip libpng-dev libzip-dev libbz2-dev libicu-dev \
+  && apt-get install -y bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
+  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ \
   && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache \
-  && apt-get remove -y libpng-dev libicu-dev \
+  && apt-get remove -y libpng-dev libfreetype6-dev libicu-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -21,7 +22,7 @@ RUN apt-get update \
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-ARG VERSION=14.0.6
+ARG VERSION=15.0.2
 
 RUN curl -s -o nextcloud.tar.bz2 https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
@@ -35,7 +36,7 @@ RUN curl -s https://github.com/asannou/user_saml/commit/476e66589f845a2eb6890f83
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/14/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
