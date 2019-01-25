@@ -19,7 +19,15 @@ RUN apt-get update \
   && curl -s -o nextcloud.tar.bz2 https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2 \
   && curl -s -o nextcloud.tar.bz2.asc https://download.nextcloud.com/server/releases/nextcloud-${VERSION}.tar.bz2.asc \
   && export GNUPGHOME="$(mktemp -d)" \
-  && gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys 28806A878AE423A28372792ED75899B9A724937A \
+  && for server in \
+    ha.pool.sks-keyservers.net \
+    hkp://p80.pool.sks-keyservers.net:80 \
+    keyserver.ubuntu.com \
+    hkp://keyserver.ubuntu.com:80 \
+    pgp.mit.edu; \
+  do \
+    gpg --batch --keyserver $server --recv-keys 28806A878AE423A28372792ED75899B9A724937A && break || :; \
+  done \
   && gpg --batch --verify nextcloud.tar.bz2.asc nextcloud.tar.bz2 \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
