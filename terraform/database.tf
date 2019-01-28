@@ -33,7 +33,8 @@ resource "aws_db_instance" "db" {
   lifecycle {
     ignore_changes = [
       "username",
-      "password"
+      "password",
+      "snapshot_identifier"
     ]
   }
   tags {
