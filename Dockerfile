@@ -31,6 +31,25 @@ RUN apt-get update \
   && gpg --batch --verify nextcloud.tar.bz2.asc nextcloud.tar.bz2 \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
+  && for app in \
+    accessibility \
+    federation \
+    files_external \
+    files_pdfviewer \
+    files_texteditor \
+    files_trashbin \
+    files_versions \
+    files_videoplayer \
+    firstrunwizard \
+    gallery \
+    sharebymail \
+    support \
+    survey_client \
+    systemtags \
+    user_ldap; \
+  do \
+    rm -r /var/www/nextcloud/apps/$app; \
+  done \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
@@ -45,10 +64,6 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 # https://docs.nextcloud.com/server/15/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
-
-RUN curl -s -L -O https://github.com/pellaeon/registration/releases/download/v0.3.0/registration.tar.gz \
-  && tar -zxf registration.tar.gz -C /var/www/nextcloud/apps/ \
-  && rm registration.tar.gz
 
 RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v2.1.0/user_saml-2.1.0.tar.gz \
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
