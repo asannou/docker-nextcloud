@@ -17,5 +17,12 @@ occ() {
   su - -s /bin/sh -c "/usr/local/bin/php /var/www/nextcloud/occ $args" www-data
 }
 
-occ status | grep -q '\- installed: true' && occ upgrade --no-interaction
+if occ status | grep -q '\- installed: true'
+then
+  occ upgrade --no-interaction
+  occ db:add-missing-indices
+  occ db:convert-filecache-bigint
+  occ config:system:set trusted_proxies 0 --value=172.16.0.0/12
+fi
+
 exec "$@"
