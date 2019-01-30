@@ -1,5 +1,8 @@
-IMAGE := asannou/nextcloud:15-strict
-PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:15-strict
+include .env
+
+IMAGE_TAG := $(DOCKER_NEXTCLOUD_IMAGE_VERSION)$(DOCKER_NEXTCLOUD_IMAGE_BRANCH)
+IMAGE := asannou/nextcloud:$(IMAGE_TAG)
+PROXY_IMAGE := asannou/nextcloud-sharing-only-proxy:$(IMAGE_TAG)
 NAME := nextcloud
 PROXY_NAME := nextcloud-proxy
 PORT := 8000
