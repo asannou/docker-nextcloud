@@ -21,6 +21,25 @@ occ() {
 
 if occ status | grep -q '\- installed: true'
 then
+  for app in \
+    accessibility \
+    federation \
+    files_external \
+    files_pdfviewer \
+    files_texteditor \
+    files_trashbin \
+    files_versions \
+    files_videoplayer \
+    firstrunwizard \
+    gallery \
+    sharebymail \
+    support \
+    survey_client \
+    systemtags \
+    user_ldap; \
+  do
+    occ app:disable $app
+  done
   occ upgrade --no-interaction
   occ db:add-missing-indices
   occ db:convert-filecache-bigint
