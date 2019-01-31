@@ -10,6 +10,7 @@ test -e $DATA || mkdir $DATA
 chown www-data:root $CONFIG $DATA
 
 ln -snf $CONFIG /var/www/nextcloud/config/
+ln -snf $DATA /var/www/nextcloud/
 
 occ() {
   args="$@"
