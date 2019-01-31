@@ -32,6 +32,7 @@ RUN apt-get update \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
   && for app in \
+    accessibility \
     federation \
     files_external \
     files_pdfviewer \
@@ -42,6 +43,7 @@ RUN apt-get update \
     firstrunwizard \
     gallery \
     sharebymail \
+    support \
     survey_client \
     systemtags \
     user_ldap; \
