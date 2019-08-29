@@ -47,6 +47,14 @@ variable "db_password" {
   default = ""
 }
 
+variable "elasticache_engine_version" {
+  default = "5.0.4"
+}
+
+variable "elasticache_node_type" {
+  default = "cache.t2.micro"
+}
+
 variable "key_file_name" {
   default = "id_nextcloud"
 }
