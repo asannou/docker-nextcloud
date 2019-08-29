@@ -13,7 +13,7 @@ ln -snf $CONFIG /var/www/nextcloud/config/
 ln -snf $DATA /var/www/nextcloud/
 
 occ() {
-  args="$@"
+  args=$(printf "'%s' " "$@")
   su - -s /bin/sh -c "/usr/local/bin/php /var/www/nextcloud/occ $args" www-data
 }
 
@@ -22,6 +22,7 @@ then
   occ upgrade --no-interaction
   occ db:add-missing-indices
   occ db:convert-filecache-bigint
+  occ config:system:set memcache.local --value='\OC\Memcache\APCu'
   occ config:system:set trusted_proxies 0 --value=10.0.0.0/8
   occ config:system:set trusted_proxies 1 --value=172.16.0.0/12
   occ config:system:set trusted_proxies 2 --value=192.168.0.0/16

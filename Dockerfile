@@ -38,9 +38,10 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# For enhanced server performance
-#RUN yes '' | pecl install apcu-4.0.11
-#RUN docker-php-ext-enable apcu
+# https://docs.nextcloud.com/server/15/admin_manual/configuration_server/caching_configuration.html
+RUN yes '' | pecl install apcu-5.1.17 \
+  && yes '' | pecl install redis-5.0.2 \
+  && docker-php-ext-enable apcu redis
 
 # https://docs.nextcloud.com/server/15/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/

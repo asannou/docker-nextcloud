@@ -1,5 +1,6 @@
 <?php
 $CONFIG = array (
+  'memcache.local' => '\OC\Memcache\APCu',
   'trusted_proxies' =>
   array (
     0 => '10.0.0.0/8',
