@@ -1,4 +1,4 @@
-FROM nginx:stable
+FROM asannou/library-nginx:stable
 
 RUN apt-get update && apt-get install -y fail2ban
 
