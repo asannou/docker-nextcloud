@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM asannou/library-php:7.2-apache
 
 ARG VERSION=15.0.2
 ARG USER_SAML_VERSION=2.1.0
