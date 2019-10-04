@@ -50,6 +50,7 @@ then
   occ config:system:set datadirectory --value=$DATA
   occ config:system:set skeletondirectory
   occ config:system:set enable_previews --type=boolean --value=false
+  occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
 fi
 
 exec "$@"
