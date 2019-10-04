@@ -27,6 +27,7 @@ then
   occ config:system:set trusted_proxies 1 --value=172.16.0.0/12
   occ config:system:set trusted_proxies 2 --value=192.168.0.0/16
   occ config:system:set datadirectory --value=$DATA
+  occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
 fi
 
 exec "$@"
