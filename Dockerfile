@@ -1,14 +1,14 @@
 FROM asannou/library-php:7.2-apache
 
-ARG VERSION=15.0.12
+ARG VERSION=16.0.5
 ARG USER_SAML_VERSION=2.1.0
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/16/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
-# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/16/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
@@ -38,12 +38,12 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# https://docs.nextcloud.com/server/15/admin_manual/configuration_server/caching_configuration.html
-RUN yes '' | pecl install apcu-5.1.17 \
+# https://docs.nextcloud.com/server/16/admin_manual/configuration_server/caching_configuration.html
+RUN yes '' | pecl install apcu-5.1.18 \
   && yes '' | pecl install redis-5.0.2 \
   && docker-php-ext-enable apcu redis
 
-# https://docs.nextcloud.com/server/15/admin_manual/configuration_server/server_tuning.html#enable-php-opcache
+# https://docs.nextcloud.com/server/16/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
@@ -55,7 +55,7 @@ RUN curl -s https://github.com/nextcloud/user_saml/compare/v${USER_SAML_VERSION}
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/16/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
