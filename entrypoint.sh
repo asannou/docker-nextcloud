@@ -21,27 +21,29 @@ occ() {
   su - -s /bin/sh -c "/usr/local/bin/php /var/www/nextcloud/occ $args" www-data
 }
 
+list_enabled_apps() {
+  occ app:list --output=json | sed -E 's/.*"enabled":\{([^}]+).*/\1/;s/"([^"]+)":"[^"]+",?/\1\n/g'
+}
+
+exclude_allowed_apps() {
+  grep -v -F 'activity
+admin_audit
+comments
+dav
+encryption
+files
+files_sharing
+logreader
+nextcloud_announcements
+password_policy
+serverinfo
+theming
+updatenotification
+user_saml'
+  }
+
 if occ status | grep -q '\- installed: true'
 then
-  for app in \
-    accessibility \
-    federation \
-    files_external \
-    files_pdfviewer \
-    files_texteditor \
-    files_trashbin \
-    files_versions \
-    files_videoplayer \
-    firstrunwizard \
-    gallery \
-    sharebymail \
-    support \
-    survey_client \
-    systemtags \
-    user_ldap; \
-  do
-    occ app:disable $app
-  done
   occ upgrade --no-interaction
   occ db:add-missing-indices
   occ db:convert-filecache-bigint
@@ -53,6 +55,7 @@ then
   occ config:system:set skeletondirectory
   occ config:system:set enable_previews --type=boolean --value=false
   occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
+  occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
 fi
 
 exec "$@"
