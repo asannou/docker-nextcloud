@@ -13,7 +13,7 @@ RUN a2enmod rewrite headers env dir mime
 RUN apt-get update \
   && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ \
-  && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache \
+  && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache pcntl \
   && apt-get purge -y libpng-dev libfreetype6-dev libicu-dev \
 # Download Nextcloud Server
   && apt-get install -y --no-install-recommends gnupg dirmngr \
@@ -66,6 +66,8 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 
 # https://docs.nextcloud.com/server/16/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
+
+COPY php-memory.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 COPY php-upload-tmp-dir.ini /usr/local/etc/php/conf.d/
 
