@@ -64,7 +64,7 @@ RUN chown -R www-data:www-data /var/www/nextcloud/
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
-# https://docs.nextcloud.com/server/15/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
+# https://docs.nextcloud.com/server/16/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
 RUN sed -i -E 's/(php_value upload_max_filesize ).*/\116G/g; s/(php_value post_max_size ).*/\116G/g' /var/www/nextcloud/.htaccess
 RUN sed -i -E 's/(upload_max_filesize=).*/\116G/g; s/(post_max_size=).*/\116G/g' /var/www/nextcloud/.user.ini
 
