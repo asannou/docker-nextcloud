@@ -33,25 +33,6 @@ RUN apt-get update \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
   && curl -s https://github.com/nextcloud/server/compare/v${VERSION}...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
-  && for app in \
-    accessibility \
-    federation \
-    files_external \
-    files_pdfviewer \
-    files_texteditor \
-    files_trashbin \
-    files_versions \
-    files_videoplayer \
-    firstrunwizard \
-    gallery \
-    sharebymail \
-    support \
-    survey_client \
-    systemtags \
-    user_ldap; \
-  do \
-    rm -r /var/www/nextcloud/apps/$app; \
-  done \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
