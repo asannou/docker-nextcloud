@@ -11,7 +11,7 @@ RUN a2enmod rewrite headers env dir mime
 # https://docs.nextcloud.com/server/16/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
+  && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
   && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ \
   && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache pcntl \
   && apt-get purge -y libpng-dev libfreetype6-dev libicu-dev \
