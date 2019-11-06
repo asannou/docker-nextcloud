@@ -1,8 +1,8 @@
 #!/bin/bash -ex
-test -e $(dirname $0)/latest || exit
 IFS=-
 set -- $DOCKER_TAG
 IFS=$' \t\n'
+test "$1" = "$LATEST_VERSION" || exit
 TAG=${2:-latest}
 docker tag $IMAGE_NAME $DOCKER_REPO:$TAG
 docker push $DOCKER_REPO:$TAG
