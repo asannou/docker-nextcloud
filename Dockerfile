@@ -1,7 +1,7 @@
 FROM asannou/library-php:7.2-apache
 
 ARG VERSION=16.0.5
-ARG USER_SAML_VERSION=2.1.0
+ARG USER_SAML_VERSION=2.4.0
 
 WORKDIR /root
 
