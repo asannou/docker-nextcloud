@@ -2,7 +2,7 @@
 IFS=-
 set -- $DOCKER_TAG
 IFS=$' \t\n'
-test "$1" = "$LATEST_VERSION" || exit
+test "$1" = "$LATEST_VERSION" || exit 0
 TAG=${2:-latest}
 docker tag $IMAGE_NAME $DOCKER_REPO:$TAG
 docker push $DOCKER_REPO:$TAG
