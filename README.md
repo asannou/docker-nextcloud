@@ -1,7 +1,7 @@
 
 ```
-$ sudo docker run -d --name nextcloud -v $(pwd)/volume:/volume asannou/nextcloud:16-strict
-$ sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy:16-strict
+$ sudo docker run -d --name nextcloud -v $(pwd)/volume:/volume asannou/nextcloud:17-strict
+$ sudo docker run -d --cap-add=NET_ADMIN --name nextcloud-proxy -p 8000:8000 -p 80:80 --link nextcloud asannou/nextcloud-sharing-only-proxy:17-strict
 ```
 
 or
