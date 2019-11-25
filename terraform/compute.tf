@@ -249,3 +249,29 @@ resource "aws_elb" "elb" {
   }
 }
 
+resource "aws_load_balancer_policy" "elb" {
+  load_balancer_name = "${aws_elb.elb.name}"
+  policy_name = "nextcloud-ssl"
+  policy_type_name = "SSLNegotiationPolicyType"
+  policy_attribute {
+    name = "Reference-Security-Policy"
+    value = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  }
+}
+
+resource "aws_load_balancer_listener_policy" "8000" {
+  load_balancer_name = "${aws_elb.elb.name}"
+  load_balancer_port = 8000
+  policy_names = [
+    "${aws_load_balancer_policy.elb.policy_name}",
+  ]
+}
+
+resource "aws_load_balancer_listener_policy" "443" {
+  load_balancer_name = "${aws_elb.elb.name}"
+  load_balancer_port = 443
+  policy_names = [
+    "${aws_load_balancer_policy.elb.policy_name}",
+  ]
+}
+
