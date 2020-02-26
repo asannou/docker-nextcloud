@@ -1,7 +1,7 @@
 FROM asannou/library-php:7.2-apache
 
 ARG VERSION=17.0.3
-ARG USER_SAML_VERSION=2.4.0
+ARG USER_SAML_VERSION=2.4.2
 
 WORKDIR /root
 
@@ -52,8 +52,6 @@ COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v${USER_SAML_VERSION}/user_saml-${USER_SAML_VERSION}.tar.gz \
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
   && rm user_saml.tar.gz
-
-RUN curl -s https://github.com/nextcloud/user_saml/compare/v${USER_SAML_VERSION}...asannou:v${USER_SAML_VERSION}-csrf.patch | patch -d /var/www/nextcloud/apps/user_saml -p 1
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
