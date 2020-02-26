@@ -1,7 +1,7 @@
 FROM asannou/library-php:7.2-apache
 
-ARG VERSION=17.0.0
-ARG USER_SAML_VERSION=2.4.0
+ARG VERSION=17.0.3
+ARG USER_SAML_VERSION=2.4.2
 
 WORKDIR /root
 
@@ -56,15 +56,13 @@ RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releas
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
   && rm user_saml.tar.gz
 
-RUN curl -s https://github.com/nextcloud/user_saml/compare/v${USER_SAML_VERSION}...asannou:v${USER_SAML_VERSION}-csrf.patch | patch -d /var/www/nextcloud/apps/user_saml -p 1
-
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
 # https://docs.nextcloud.com/server/17/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
-# https://docs.nextcloud.com/server/16/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
+# https://docs.nextcloud.com/server/17/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
 RUN sed -i -E 's/(php_value upload_max_filesize ).*/\116G/g; s/(php_value post_max_size ).*/\116G/g' /var/www/nextcloud/.htaccess
 RUN sed -i -E 's/(upload_max_filesize=).*/\116G/g; s/(post_max_size=).*/\116G/g' /var/www/nextcloud/.user.ini
 
