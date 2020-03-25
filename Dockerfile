@@ -1,6 +1,6 @@
 FROM asannou/library-php:7.2-apache
 
-ARG VERSION=17.0.3
+ARG VERSION=17.0.5
 ARG USER_SAML_VERSION=2.4.2
 
 WORKDIR /root
@@ -32,7 +32,7 @@ RUN apt-get update \
   && gpg --batch --verify nextcloud.tar.bz2.asc nextcloud.tar.bz2 \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
-  && curl -s https://github.com/nextcloud/server/compare/v${VERSION}...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
+  && curl -s https://github.com/nextcloud/server/compare/v17.0.4...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
