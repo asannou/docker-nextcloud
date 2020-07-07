@@ -11,7 +11,10 @@ variable "gateway_id" {
 }
 
 variable "subnet_public" {
-#  default = "172.31.0.0/28"
+  default = [
+#    "172.31.0.0/28",
+#    "172.31.0.48/28",
+  ]
 }
 
 variable "subnet_private" {
@@ -28,7 +31,11 @@ variable "cidr_internal" {
 }
 
 variable "db_engine_version" {
-  default = "5.6.39"
+  default = "5.7.30"
+}
+
+variable "db_parameter_group_name" {
+  default = "default.mysql5.7"
 }
 
 variable "db_instance_class" {

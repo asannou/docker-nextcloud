@@ -1,9 +1,18 @@
-resource "aws_subnet" "public" {
+resource "aws_subnet" "public0" {
   vpc_id = "${var.vpc_id}"
-  cidr_block = "${var.subnet_public}"
+  cidr_block = "${var.subnet_public[0]}"
   availability_zone = "${var.aws_region}a"
   tags {
-    Name = "nextcloud-public"
+    Name = "nextcloud-public0"
+  }
+}
+
+resource "aws_subnet" "public1" {
+  vpc_id = "${var.vpc_id}"
+  cidr_block = "${var.subnet_public[1]}"
+  availability_zone = "${var.aws_region}c"
+  tags {
+    Name = "nextcloud-public1"
   }
 }
 
@@ -36,8 +45,13 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public" {
-  subnet_id = "${aws_subnet.public.id}"
+resource "aws_route_table_association" "public0" {
+  subnet_id = "${aws_subnet.public0.id}"
+  route_table_id = "${aws_route_table.public.id}"
+}
+
+resource "aws_route_table_association" "public1" {
+  subnet_id = "${aws_subnet.public1.id}"
   route_table_id = "${aws_route_table.public.id}"
 }
 
@@ -71,7 +85,10 @@ resource "aws_db_subnet_group" "db" {
 
 resource "aws_network_acl" "acl-public" {
   vpc_id = "${var.vpc_id}"
-  subnet_ids = ["${aws_subnet.public.id}"]
+  subnet_ids = [
+    "${aws_subnet.public0.id}",
+    "${aws_subnet.public1.id}",
+  ]
   ingress {
     rule_no = 100
     action = "allow"
@@ -137,7 +154,7 @@ resource "aws_network_acl" "acl-private" {
     protocol = "tcp"
     from_port = 3306
     to_port = 3306
-    cidr_block =  "${var.subnet_public}"
+    cidr_block =  "${var.subnet_public[0]}"
   }
   ingress {
     rule_no = 110
@@ -145,7 +162,7 @@ resource "aws_network_acl" "acl-private" {
     protocol = "tcp"
     from_port = 6379
     to_port = 6379
-    cidr_block =  "${var.subnet_public}"
+    cidr_block =  "${var.subnet_public[0]}"
   }
   egress {
     rule_no = 100
@@ -153,7 +170,7 @@ resource "aws_network_acl" "acl-private" {
     protocol = "tcp"
     from_port = 1024
     to_port = 65535
-    cidr_block =  "${var.subnet_public}"
+    cidr_block =  "${var.subnet_public[0]}"
   }
   tags {
       Name = "nextcloud-acl-private"
