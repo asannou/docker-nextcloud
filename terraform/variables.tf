@@ -11,7 +11,10 @@ variable "gateway_id" {
 }
 
 variable "subnet_public" {
-#  default = "172.31.0.0/28"
+  default = [
+#    "172.31.0.0/28",
+#    "172.31.0.48/28",
+  ]
 }
 
 variable "subnet_private" {

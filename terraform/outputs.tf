@@ -6,8 +6,8 @@ output "web.public_ip" {
   value = "${aws_instance.web.public_ip}"
 }
 
-output "elb.dns_name" {
-  value = "${aws_elb.elb.dns_name}"
+output "alb.dns_name" {
+  value = "${aws_lb.alb.dns_name}"
 }
 
 output "db.endpoint" {

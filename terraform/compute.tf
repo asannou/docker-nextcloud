@@ -151,7 +151,7 @@ data "aws_ami" "ami" {
 resource "aws_instance" "web" {
   ami = "${data.aws_ami.ami.id}"
   instance_type = "${var.web_instance_type}"
-  subnet_id = "${aws_subnet.public.id}"
+  subnet_id = "${aws_subnet.public0.id}"
   associate_public_ip_address = true
   root_block_device = {
     volume_type = "gp2"
@@ -189,7 +189,7 @@ EOD
 }
 
 resource "aws_ebs_volume" "volume" {
-  availability_zone = "${aws_subnet.public.availability_zone}"
+  availability_zone = "${aws_subnet.public0.availability_zone}"
   type = "gp2"
   size = "${var.volume_size}"
   tags {
@@ -213,65 +213,85 @@ resource "aws_volume_attachment" "volume_attachment" {
   }
 }
 
-resource "aws_elb" "elb" {
+resource "aws_lb" "alb" {
   name = "nextcloud"
-  subnets = ["${aws_subnet.public.id}"]
-  instances = ["${aws_instance.web.id}"]
-  cross_zone_load_balancing = true
-  idle_timeout = 60
-  listener {
-    lb_port = 8000
-    lb_protocol = "https"
-    instance_port = 8000
-    instance_protocol = "http"
-    ssl_certificate_id = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
-  }
-  listener {
-    lb_port = 443
-    lb_protocol = "https"
-    instance_port = 80
-    instance_protocol = "http"
-    ssl_certificate_id = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
-  }
+  internal = false
+  load_balancer_type = "application"
   security_groups = [
     "${aws_security_group.elb-internal.id}",
     "${aws_security_group.elb-external.id}",
   ]
+  subnets = [
+    "${aws_subnet.public0.id}",
+    "${aws_subnet.public1.id}",
+  ]
+  idle_timeout = 3600
+  tags = {
+    Name = "nextcloud-alb"
+  }
+}
+
+resource "aws_lb_listener" "alb-internal" {
+  load_balancer_arn = "${aws_lb.alb.arn}"
+  port = "443"
+  protocol = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
+  default_action {
+    type = "forward"
+    target_group_arn = "${aws_lb_target_group.alb-internal.arn}"
+  }
+}
+
+resource "aws_lb_target_group" "alb-internal" {
+  name = "nextcloud"
+  port = 8000
+  protocol = "HTTP"
+  vpc_id = "${var.vpc_id}"
   health_check {
-    target = "TCP:8000"
     interval = 30
     timeout = 5
     unhealthy_threshold = 2
     healthy_threshold = 2
-  }
-  tags {
-    Name = "nextcloud-elb"
+    matcher = "400"
   }
 }
 
-resource "aws_load_balancer_policy" "elb" {
-  load_balancer_name = "${aws_elb.elb.name}"
-  policy_name = "nextcloud-ssl"
-  policy_type_name = "SSLNegotiationPolicyType"
-  policy_attribute {
-    name = "Reference-Security-Policy"
-    value = "ELBSecurityPolicy-TLS-1-2-2017-01"
+resource "aws_lb_target_group_attachment" "alb-internal" {
+  target_group_arn = "${aws_lb_target_group.alb-internal.arn}"
+  target_id = "${aws_instance.web.id}"
+  port = 8000
+}
+
+resource "aws_lb_listener" "alb-external" {
+  load_balancer_arn = "${aws_lb.alb.arn}"
+  port = "443"
+  protocol = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
+  default_action {
+    type = "forward"
+    target_group_arn = "${aws_lb_target_group.alb-external.arn}"
   }
 }
 
-resource "aws_load_balancer_listener_policy" "8000" {
-  load_balancer_name = "${aws_elb.elb.name}"
-  load_balancer_port = 8000
-  policy_names = [
-    "${aws_load_balancer_policy.elb.policy_name}",
-  ]
+resource "aws_lb_target_group" "alb-external" {
+  name = "nextcloud"
+  port = 80
+  protocol = "HTTP"
+  vpc_id = "${var.vpc_id}"
+  health_check {
+    interval = 30
+    timeout = 5
+    unhealthy_threshold = 2
+    healthy_threshold = 2
+    matcher = "400"
+  }
 }
 
-resource "aws_load_balancer_listener_policy" "443" {
-  load_balancer_name = "${aws_elb.elb.name}"
-  load_balancer_port = 443
-  policy_names = [
-    "${aws_load_balancer_policy.elb.policy_name}",
-  ]
+resource "aws_lb_target_group_attachment" "alb-external" {
+  target_group_arn = "${aws_lb_target_group.alb-external.arn}"
+  target_id = "${aws_instance.web.id}"
+  port = 80
 }
 
