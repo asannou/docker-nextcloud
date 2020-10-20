@@ -1,14 +1,14 @@
-FROM asannou/library-php:7.2-apache
+FROM asannou/library-php:7.3-apache
 
-ARG VERSION=17.0.7
-ARG USER_SAML_VERSION=2.4.2
+ARG VERSION=18.0.10
+ARG USER_SAML_VERSION=3.1.3
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/17/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime sed
 
-# https://docs.nextcloud.com/server/17/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
@@ -33,19 +33,20 @@ RUN apt-get update \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
   && curl -s https://github.com/nextcloud/server/compare/v${VERSION}...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
+  && curl -s https://github.com/nextcloud/server/compare/stable18...Cybso:23174-revert-commit-from-54a5f938f99.patch | patch -d /var/www/nextcloud -p 1 \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# https://docs.nextcloud.com/server/17/admin_manual/configuration_server/caching_configuration.html
+# https://docs.nextcloud.com/server/18/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu-5.1.18 \
   && yes '' | pecl install redis-5.0.2 \
   && docker-php-ext-enable apcu redis
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
-# https://docs.nextcloud.com/server/17/admin_manual/installation/server_tuning.html#enable-php-opcache
+# https://docs.nextcloud.com/server/18/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-memory.ini /usr/local/etc/php/conf.d/
@@ -58,11 +59,11 @@ RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releas
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/17/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
-# https://docs.nextcloud.com/server/17/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
+# https://docs.nextcloud.com/server/18/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
 RUN sed -i -E 's/(php_value upload_max_filesize ).*/\116G/g; s/(php_value post_max_size ).*/\116G/g' /var/www/nextcloud/.htaccess
 RUN sed -i -E 's/(upload_max_filesize=).*/\116G/g; s/(post_max_size=).*/\116G/g' /var/www/nextcloud/.user.ini
 
