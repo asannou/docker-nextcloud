@@ -40,8 +40,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # https://docs.nextcloud.com/server/18/admin_manual/configuration_server/caching_configuration.html
-RUN yes '' | pecl install apcu-5.1.18 \
-  && yes '' | pecl install redis-5.0.2 \
+RUN yes '' | pecl install apcu \
+  && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
