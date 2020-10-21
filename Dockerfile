@@ -44,6 +44,8 @@ RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
+COPY php-apcu.ini /usr/local/etc/php/conf.d/
+
 # https://docs.nextcloud.com/server/18/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
