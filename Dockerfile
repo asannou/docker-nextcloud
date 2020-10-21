@@ -39,12 +39,14 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
+
 # https://docs.nextcloud.com/server/18/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
+COPY php-apcu.ini /usr/local/etc/php/conf.d/
 
 # https://docs.nextcloud.com/server/18/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
