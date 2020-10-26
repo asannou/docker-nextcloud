@@ -4,14 +4,12 @@ echo '/dev/xvdh /volume ext4 defaults,nofail 0 2' >> /etc/fstab
 mount -a
 
 yum -y -q update
-yum -y -q install amazon-ssm-agent docker
+yum -y -q install yum-cron docker
 
-start amazon-ssm-agent
-
-chkconfig docker on
-service docker start
+systemctl enable docker
+systemctl start docker
 
 install -o root -g root -m 0700 docker-nextcloud /etc/rc.d/init.d/
-chkconfig docker-nextcloud on
+systemctl enable docker-nextcloud
 
-reboot
+shutdown -r +1
