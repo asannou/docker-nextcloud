@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if /sbin/grubby --default-kernel | /bin/grep -q "$(/bin/uname -r)"
+if /usr/bin/needs-restarting -r
 then
   /etc/rc.d/init.d/docker-nextcloud start
 else
