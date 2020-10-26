@@ -253,6 +253,7 @@ resource "aws_lb_target_group" "alb-internal" {
     timeout = 5
     unhealthy_threshold = 2
     healthy_threshold = 2
+    path = "/status.php"
     matcher = "400"
   }
 }
