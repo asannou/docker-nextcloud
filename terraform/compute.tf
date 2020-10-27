@@ -233,7 +233,7 @@ resource "aws_lb" "alb" {
 
 resource "aws_lb_listener" "alb-internal" {
   load_balancer_arn = "${aws_lb.alb.arn}"
-  port = "443"
+  port = "8000"
   protocol = "HTTPS"
   ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
@@ -244,7 +244,7 @@ resource "aws_lb_listener" "alb-internal" {
 }
 
 resource "aws_lb_target_group" "alb-internal" {
-  name = "nextcloud"
+  name = "nextcloud-internal"
   port = 8000
   protocol = "HTTP"
   vpc_id = "${var.vpc_id}"
@@ -277,7 +277,7 @@ resource "aws_lb_listener" "alb-external" {
 }
 
 resource "aws_lb_target_group" "alb-external" {
-  name = "nextcloud"
+  name = "nextcloud-external"
   port = 80
   protocol = "HTTP"
   vpc_id = "${var.vpc_id}"
