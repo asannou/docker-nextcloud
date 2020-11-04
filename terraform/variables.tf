@@ -39,7 +39,7 @@ variable "db_parameter_group_name" {
 }
 
 variable "db_instance_class" {
-  default = "db.t2.micro"
+  default = "db.t3.micro"
 }
 
 variable "db_allocated_storage" {
