@@ -59,7 +59,7 @@ variable "elasticache_engine_version" {
 }
 
 variable "elasticache_node_type" {
-  default = "cache.t2.micro"
+  default = "cache.t3.micro"
 }
 
 variable "key_file_name" {
@@ -67,7 +67,7 @@ variable "key_file_name" {
 }
 
 variable "web_instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 variable "web_instance_timezone" {

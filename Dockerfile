@@ -1,19 +1,19 @@
-FROM asannou/library-php:7.3-apache
+FROM asannou/library-php:7.4-apache
 
-ARG VERSION=18.0.10
-ARG USER_SAML_VERSION=3.1.3
+ARG VERSION=19.0.4
+ARG USER_SAML_VERSION=3.2.1
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime sed
 
-# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ \
-  && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache pcntl \
+  && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev libgmp-dev \
+  && docker-php-ext-configure gd --with-freetype \
+  && docker-php-ext-install gd zip pdo_mysql bz2 intl opcache pcntl bcmath gmp \
   && apt-get purge -y libpng-dev libfreetype6-dev libicu-dev \
 # Download Nextcloud Server
   && apt-get install -y --no-install-recommends gnupg dirmngr \
@@ -33,7 +33,6 @@ RUN apt-get update \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
   && curl -s https://github.com/nextcloud/server/compare/v${VERSION}...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
-  && curl -s https://github.com/nextcloud/server/compare/stable18...Cybso:23174-revert-commit-from-54a5f938f99.patch | patch -d /var/www/nextcloud -p 1 \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
@@ -41,14 +40,14 @@ RUN apt-get update \
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
-# https://docs.nextcloud.com/server/18/admin_manual/configuration_server/caching_configuration.html
+# https://docs.nextcloud.com/server/19/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
 COPY php-apcu.ini /usr/local/etc/php/conf.d/
 
-# https://docs.nextcloud.com/server/18/admin_manual/installation/server_tuning.html#enable-php-opcache
+# https://docs.nextcloud.com/server/19/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-memory.ini /usr/local/etc/php/conf.d/
@@ -61,7 +60,7 @@ RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releas
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/18/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
