@@ -21,6 +21,7 @@ if occ status | grep -q '\- installed: true'
 then
   occ upgrade --no-interaction
   occ db:add-missing-indices
+  occ db:add-missing-columns
   occ db:convert-filecache-bigint
   occ config:system:set memcache.local --value='\OC\Memcache\APCu'
   occ config:system:set trusted_proxies 0 --value=10.0.0.0/8
