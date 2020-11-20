@@ -15,6 +15,6 @@ output "db.endpoint" {
 }
 
 output "elasticache.endpoint" {
-  value = "${aws_elasticache_cluster.elasticache.cache_nodes.0.address}:${aws_elasticache_cluster.elasticache.cache_nodes.0.port}"
+  value = "${aws_elasticache_replication_group.elasticache.primary_endpoint_address}:${aws_elasticache_replication_group.elasticache.port}"
 }
 
