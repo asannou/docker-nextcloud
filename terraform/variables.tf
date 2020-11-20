@@ -55,7 +55,11 @@ variable "db_password" {
 }
 
 variable "elasticache_engine_version" {
-  default = "5.0.4"
+  default = "6.x"
+}
+
+variable "elasticache_parameter_group_name" {
+  default = "default.redis6.x"
 }
 
 variable "elasticache_node_type" {

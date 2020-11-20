@@ -23,15 +23,23 @@ resource "aws_security_group_rule" "elasticache-ingress" {
   source_security_group_id = "${aws_security_group.web-all.id}"
 }
 
-resource "aws_elasticache_cluster" "elasticache" {
-  cluster_id = "nextcloud"
-  engine = "redis"
+resource "aws_elasticache_replication_group" "elasticache" {
+  replication_group_id = "nextcloud"
+  replication_group_description = "nextcloud"
+  number_cache_clusters = 1
   node_type = "${var.elasticache_node_type}"
-  num_cache_nodes = 1
-  parameter_group_name = "default.redis5.0"
+  automatic_failover_enabled = false
+  auto_minor_version_upgrade = true
+  engine = "redis"
   engine_version = "${var.elasticache_engine_version}"
+  parameter_group_name = "${var.elasticache_parameter_group_name}"
   port = 6379
   subnet_group_name = "${aws_elasticache_subnet_group.elasticache.name}"
   security_group_ids = ["${aws_security_group.elasticache.id}"]
+  lifecycle {
+    ignore_changes = [
+      "engine_version"
+    ]
+  }
 }
 
