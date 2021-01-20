@@ -52,7 +52,9 @@ COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-memory.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
-COPY php-upload-tmp-dir.ini /usr/local/etc/php/conf.d/
+
+# https://docs.nextcloud.com/server/19/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-php
+COPY php-upload.ini /usr/local/etc/php/conf.d/
 
 RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v${USER_SAML_VERSION}/user_saml-${USER_SAML_VERSION}.tar.gz \
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
@@ -63,10 +65,6 @@ RUN chown -R www-data:www-data /var/www/nextcloud/
 # https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
-
-# https://docs.nextcloud.com/server/18/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-your-web-server
-RUN sed -i -E 's/(php_value upload_max_filesize ).*/\116G/g; s/(php_value post_max_size ).*/\116G/g' /var/www/nextcloud/.htaccess
-RUN sed -i -E 's/(upload_max_filesize=).*/\116G/g; s/(post_max_size=).*/\116G/g' /var/www/nextcloud/.user.ini
 
 COPY crontab /root/
 RUN crontab -u www-data /root/crontab
