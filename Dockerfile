@@ -1,6 +1,6 @@
 FROM asannou/library-php:7.4-apache
 
-ARG VERSION=19.0.4
+ARG VERSION=19.0.7
 ARG USER_SAML_VERSION=3.2.1
 
 WORKDIR /root
