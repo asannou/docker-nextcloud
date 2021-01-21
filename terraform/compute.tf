@@ -226,6 +226,7 @@ resource "aws_lb" "alb" {
     "${aws_subnet.public1.id}",
   ]
   idle_timeout = 3600
+  enable_http2 = false
   tags = {
     Name = "nextcloud-alb"
   }
