@@ -1,14 +1,14 @@
 FROM asannou/library-php:7.4-apache
 
-ARG VERSION=19.0.4
-ARG USER_SAML_VERSION=3.2.1
+ARG VERSION=20.0.10
+ARG USER_SAML_VERSION=3.3.5
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/20/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime sed
 
-# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/20/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev libgmp-dev \
@@ -32,20 +32,19 @@ RUN apt-get update \
   && gpg --batch --verify nextcloud.tar.bz2.asc nextcloud.tar.bz2 \
   && gpgconf --kill all \
   && tar -xjf nextcloud.tar.bz2 -C /var/www/ \
-  && curl -s https://github.com/nextcloud/server/compare/v${VERSION}...asannou:v${VERSION}-share-expiration.patch | patch -d /var/www/nextcloud -p 1 \
   && rm -r "$GNUPGHOME" nextcloud.tar.bz2 nextcloud.tar.bz2.asc \
   && apt-get purge -y gnupg dirmngr \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# https://docs.nextcloud.com/server/19/admin_manual/configuration_server/caching_configuration.html
+# https://docs.nextcloud.com/server/20/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
 COPY php-apcu.ini /usr/local/etc/php/conf.d/
 
-# https://docs.nextcloud.com/server/19/admin_manual/installation/server_tuning.html#enable-php-opcache
+# https://docs.nextcloud.com/server/20/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-memory.ini /usr/local/etc/php/conf.d/
@@ -57,7 +56,7 @@ RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releas
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/19/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/20/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
