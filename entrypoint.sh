@@ -47,6 +47,7 @@ then
   occ upgrade --no-interaction
   occ db:add-missing-indices
   occ db:add-missing-columns
+  occ db:add-missing-primary-keys
   occ db:convert-filecache-bigint --no-interaction
   occ config:system:set memcache.local --value='\OC\Memcache\APCu'
   occ config:system:set trusted_proxies 0 --value=10.0.0.0/8
@@ -56,6 +57,7 @@ then
   occ config:system:set skeletondirectory
   occ config:system:set enable_previews --type=boolean --value=false
   occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
+  occ encryption:scan:legacy-format && occ config:system:set encryption.legacy_format_support --type=boolean --value=false
   occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
 fi
 
