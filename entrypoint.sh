@@ -49,6 +49,7 @@ then
   occ db:add-missing-columns
   occ db:add-missing-primary-keys
   occ db:convert-filecache-bigint --no-interaction
+  occ config:system:set loglevel --type integer --value=1
   occ config:system:set memcache.local --value='\OC\Memcache\APCu'
   occ config:system:set trusted_proxies 0 --value=10.0.0.0/8
   occ config:system:set trusted_proxies 1 --value=172.16.0.0/12
