@@ -6,7 +6,7 @@ ARG USER_SAML_VERSION=3.3.5
 WORKDIR /root
 
 # https://docs.nextcloud.com/server/20/admin_manual/installation/source_installation.html#additional-apache-configurations
-RUN a2enmod rewrite headers env dir mime sed
+RUN a2enmod rewrite headers env dir mime
 
 # https://docs.nextcloud.com/server/20/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
@@ -67,6 +67,8 @@ RUN a2ensite nextcloud.conf
 
 COPY crontab /root/
 RUN crontab -u www-data /root/crontab
+
+RUN echo '#collection-list { display: none !important; }' >> /var/www/nextcloud/apps/files/css/merged.scss
 
 VOLUME /volume
 
