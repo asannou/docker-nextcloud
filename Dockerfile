@@ -68,7 +68,7 @@ RUN a2ensite nextcloud.conf
 COPY crontab /root/
 RUN crontab -u www-data /root/crontab
 
-RUN echo '#collection-list { display: none !important; }' >> /var/www/nextcloud/apps/files/css/merged.scss
+RUN echo '#collection-list, [data-action="template-init"] { display: none !important; }' >> /var/www/nextcloud/apps/files/css/merged.scss
 
 VOLUME /volume
 
