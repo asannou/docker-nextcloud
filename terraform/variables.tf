@@ -31,11 +31,11 @@ variable "cidr_internal" {
 }
 
 variable "db_engine_version" {
-  default = "5.7.30"
+  default = "8.0.23"
 }
 
 variable "db_parameter_group_name" {
-  default = "default.mysql5.7"
+  default = "default.mysql8.0"
 }
 
 variable "db_instance_class" {
