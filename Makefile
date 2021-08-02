@@ -30,5 +30,8 @@ proxy-image:
 pull:
 	docker pull $(IMAGE) && docker pull $(PROXY_IMAGE)
 
+push:
+	docker push $(IMAGE) && docker push $(PROXY_IMAGE)
+
 .PHONY: up proxy web down build image proxy-image pull
 

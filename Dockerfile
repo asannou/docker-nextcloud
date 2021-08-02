@@ -1,4 +1,4 @@
-FROM asannou/library-php:7.4-apache
+FROM php:7.4-apache
 
 ARG VERSION=21.0.2
 ARG USER_SAML_VERSION=4.1.1
