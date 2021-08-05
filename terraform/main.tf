@@ -8,6 +8,7 @@ terraform {
 
 provider "aws" {
   region = "${var.aws_region}"
+  version = "~> 2.70"
 }
 
 data "aws_caller_identity" "aws" {}
