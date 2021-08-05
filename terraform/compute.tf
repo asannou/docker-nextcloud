@@ -227,6 +227,7 @@ resource "aws_lb" "alb" {
   ]
   idle_timeout = 3600
   enable_http2 = false
+  #enable_waf_fail_open = true
   tags = {
     Name = "nextcloud-alb"
   }
