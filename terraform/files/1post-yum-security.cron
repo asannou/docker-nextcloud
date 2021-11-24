@@ -1,8 +1,12 @@
 #!/bin/bash
 
+is_running() {
+  test -n "$(/etc/init.d/docker-nextcloud status)"
+}
+
 if /usr/bin/needs-restarting -r
 then
-  /etc/rc.d/init.d/docker-nextcloud start
+  is_running || /etc/rc.d/init.d/docker-nextcloud restart
 else
   /sbin/reboot
 fi
