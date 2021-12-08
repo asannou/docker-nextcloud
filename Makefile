@@ -11,7 +11,7 @@ SHARING_PORT := 80
 up: proxy web
 
 proxy: web
-	docker run -d --cap-add=NET_ADMIN --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
+	docker run -d --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
 
 web:
 	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume $(IMAGE)
