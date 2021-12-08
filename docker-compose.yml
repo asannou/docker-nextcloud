@@ -13,7 +13,5 @@ services:
     ports:
       - '80:80'
       - '8000:8000'
-    cap_add:
-      - NET_ADMIN
     depends_on:
       - nextcloud
