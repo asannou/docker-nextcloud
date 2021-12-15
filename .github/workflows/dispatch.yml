@@ -1,0 +1,36 @@
+name: Dispatch GitHub Actions
+
+on:
+  schedule:
+    - cron: '45 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    name: Dispatch actions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create workflow dispatches
+        uses: actions/github-script@v5
+        env:
+          WORKFLOW_FILE: docker-publish.yml
+        with:
+          github-token: ${{ secrets.TOKEN }}
+          script: |
+            const { WORKFLOW_FILE } = process.env;
+            const { owner, repo } = context.repo;
+            const { actions, repos } = github.rest;
+            const { data: { workflows } } = await actions.listRepoWorkflows({ owner, repo });
+            const workflow_path = `.github/workflows/${WORKFLOW_FILE}`;
+            const workflow = workflows.find(({ path }) => path == workflow_path);
+            const branches = await repos.listBranches({ owner, repo });
+            for (const { name } of branches.data) {
+              await actions.createWorkflowDispatch({
+                owner,
+                repo,
+                workflow_id: workflow.id,
+                ref: name,
+              }).catch((e) => {
+                console.error(e);
+              });
+            }
