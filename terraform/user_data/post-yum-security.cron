@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if /usr/bin/needs-restarting -r
+then
+  /etc/rc.d/init.d/docker-nextcloud start
+else
+  /sbin/reboot
+fi
+

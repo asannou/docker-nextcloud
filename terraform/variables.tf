@@ -2,6 +2,11 @@ variable "aws_region" {
   default = "ap-northeast-1"
 }
 
+variable "default_tags" {
+  default = {
+  }
+}
+
 variable "vpc_id" {
 #  default = "vpc-deadbeef"
 }
@@ -54,6 +59,10 @@ variable "db_password" {
   default = ""
 }
 
+variable "db_apply_immediately" {
+  default = false
+}
+
 variable "elasticache_engine_version" {
   default = "6.x"
 }
@@ -64,10 +73,6 @@ variable "elasticache_parameter_group_name" {
 
 variable "elasticache_node_type" {
   default = "cache.t3.micro"
-}
-
-variable "key_file_name" {
-  default = "id_nextcloud"
 }
 
 variable "web_instance_type" {
@@ -82,7 +87,11 @@ variable "volume_size" {
   default = 100
 }
 
-variable "server_certificate_name" {
+variable "certificate_name" {
 #  default = "nextcloud"
+}
+
+variable "certificate_id" {
+  default = null
 }
 
