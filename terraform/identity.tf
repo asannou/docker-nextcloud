@@ -1,20 +1,17 @@
+data "aws_iam_policy_document" "nextcloud" {
+  statement {
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
 resource "aws_iam_role" "nextcloud" {
   name               = "EC2RoleNextcloud"
   path               = "/"
-  assume_role_policy = <<EOD
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOD
+  assume_role_policy = data.aws_iam_policy_document.nextcloud.json
 }
 
 resource "aws_iam_instance_profile" "nextcloud" {

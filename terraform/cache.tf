@@ -1,9 +1,6 @@
 resource "aws_elasticache_subnet_group" "elasticache" {
-  name = "nextcloud"
-  subnet_ids = [
-    aws_subnet.private0.id,
-    aws_subnet.private1.id,
-  ]
+  name       = "nextcloud"
+  subnet_ids = [for subnet in aws_subnet.private : subnet.id]
 }
 
 resource "aws_security_group" "elasticache" {
@@ -36,6 +33,9 @@ resource "aws_elasticache_replication_group" "elasticache" {
   port                       = 6379
   subnet_group_name          = aws_elasticache_subnet_group.elasticache.name
   security_group_ids         = [aws_security_group.elasticache.id]
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+  kms_key_id                 = aws_kms_key.nextcloud.arn
   lifecycle {
     ignore_changes = [
       engine_version

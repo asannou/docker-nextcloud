@@ -33,6 +33,8 @@ resource "aws_db_instance" "db" {
   allow_major_version_upgrade = true
   auto_minor_version_upgrade  = true
   ca_cert_identifier          = "rds-ca-2019"
+  storage_encrypted           = true
+  kms_key_id                  = aws_kms_key.nextcloud.arn
   apply_immediately           = var.db_apply_immediately
   lifecycle {
     ignore_changes = [

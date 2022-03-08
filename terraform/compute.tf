@@ -138,6 +138,7 @@ data "template_cloudinit_config" "user_data" {
 data "template_file" "user_data" {
   template = file("user_data.tpl.yml")
   vars = {
+    web_instance_timezone  = var.web_instance_timezone
     yum-cron-security_conf = base64encode(file("user_data/yum-cron-security.conf"))
     yum-security_cron      = base64encode(file("user_data/yum-security.cron"))
     post-yum-security_cron = base64encode(file("user_data/post-yum-security.cron"))
@@ -149,11 +150,13 @@ data "template_file" "user_data" {
 resource "aws_instance" "web" {
   ami                         = data.aws_ami.ami.id
   instance_type               = var.web_instance_type
-  subnet_id                   = aws_subnet.public0.id
+  subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true
   root_block_device {
     volume_type = "gp2"
     volume_size = 8
+    encrypted   = true
+    kms_key_id  = aws_kms_key.nextcloud.arn
   }
   vpc_security_group_ids = [
     aws_security_group.web-all.id,
@@ -162,9 +165,14 @@ resource "aws_instance" "web" {
   ]
   user_data_base64     = data.template_cloudinit_config.user_data.rendered
   iam_instance_profile = aws_iam_instance_profile.nextcloud.name
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
   lifecycle {
     ignore_changes = [
       ami,
+      user_data,
       user_data_base64,
     ]
   }
@@ -174,9 +182,11 @@ resource "aws_instance" "web" {
 }
 
 resource "aws_ebs_volume" "volume" {
-  availability_zone = aws_subnet.public0.availability_zone
+  availability_zone = aws_subnet.public[0].availability_zone
   type              = "gp2"
   size              = var.volume_size
+  encrypted         = true
+  kms_key_id        = aws_kms_key.nextcloud.arn
   tags = {
     Name = "nextcloud"
   }
@@ -189,6 +199,64 @@ resource "aws_volume_attachment" "volume_attachment" {
   skip_destroy = true
 }
 
+resource "aws_s3_bucket" "alb_log" {
+  bucket_prefix = "nextcloud-alb-logs-"
+  tags = {
+    Name = "nextcloud-alb"
+  }
+}
+
+resource "aws_s3_bucket_policy" "alb_log" {
+  bucket = aws_s3_bucket.alb_log.id
+  policy = data.aws_iam_policy_document.alb_logging.json
+}
+
+data "aws_elb_service_account" "current" {}
+
+data "aws_iam_policy_document" "alb_logging" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_elb_service_account.current.arn]
+    }
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.alb_log.arn}/AWSLogs/${data.aws_caller_identity.aws.account_id}/*"]
+  }
+  statement {
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.alb_log.arn}/AWSLogs/${data.aws_caller_identity.aws.account_id}/*"]
+  }
+  statement {
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.alb_log.arn]
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "alb_log" {
+  bucket                  = aws_s3_bucket.alb_log.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "alb_log" {
+  bucket = aws_s3_bucket.alb_log.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_lb" "alb" {
   name               = "nextcloud"
   internal           = false
@@ -198,12 +266,17 @@ resource "aws_lb" "alb" {
     aws_security_group.elb-external.id,
   ]
   subnets = [
-    aws_subnet.public0.id,
-    aws_subnet.public1.id,
+    aws_subnet.public[0].id,
+    aws_subnet.public[1].id,
   ]
-  idle_timeout         = 3600
-  enable_http2         = false
-  enable_waf_fail_open = true
+  idle_timeout               = 3600
+  enable_http2               = false
+  enable_waf_fail_open       = true
+  drop_invalid_header_fields = true
+  access_logs {
+    bucket  = aws_s3_bucket.alb_log.bucket
+    enabled = true
+  }
   tags = {
     Name = "nextcloud-alb"
   }

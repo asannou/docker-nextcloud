@@ -8,30 +8,28 @@ variable "default_tags" {
 }
 
 variable "vpc_id" {
-#  default = "vpc-deadbeef"
+  #default = "vpc-deadbeef"
 }
 
-variable "gateway_id" {
-#  default = "igw-deadbeef"
+variable "subnet_prefix" {
+  default = "172.31.0.0/24"
 }
 
-variable "subnet_public" {
-  default = [
-#    "172.31.0.0/28",
-#    "172.31.0.48/28",
-  ]
+variable "subnet_newbits" {
+  default = 4
 }
 
-variable "subnet_private" {
-  default = [
-#    "172.31.0.16/28",
-#    "172.31.0.32/28",
-  ]
+variable "subnet_public_netnum" {
+  default = [0, 3]
+}
+
+variable "subnet_private_netnum" {
+  default = [1, 2]
 }
 
 variable "cidr_internal" {
   default = [
-#    "203.0.113.1/32"
+    #"203.0.113.1/32"
   ]
 }
 
@@ -52,11 +50,11 @@ variable "db_allocated_storage" {
 }
 
 variable "db_username" {
-  default = ""
+  type = string
 }
 
 variable "db_password" {
-  default = ""
+  type = string
 }
 
 variable "db_apply_immediately" {
@@ -88,7 +86,7 @@ variable "volume_size" {
 }
 
 variable "certificate_name" {
-#  default = "nextcloud"
+  #default = "nextcloud"
 }
 
 variable "certificate_id" {

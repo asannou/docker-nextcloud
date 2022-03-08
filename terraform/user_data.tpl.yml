@@ -1,6 +1,6 @@
 #cloud-config
 
-timezone: Asia/Tokyo
+timezone: "${web_instance_timezone}"
 
 bootcmd:
   - until test -e /dev/nvme1n1; do sleep 1; done
