@@ -31,7 +31,11 @@ then
   occ config:system:set trusted_proxies 2 --value=192.168.0.0/16
   occ config:system:set datadirectory --value=$DATA
   occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
-  occ encryption:scan:legacy-format && occ config:system:set encryption.legacy_format_support --type=boolean --value=false
+  if [ "$(occ config:system:get encryption.legacy_format_support)" != 'false' ]
+  then
+    occ encryption:scan:legacy-format
+    occ config:system:set encryption.legacy_format_support --type=boolean --value=false
+  fi
 fi
 
 exec "$@"
