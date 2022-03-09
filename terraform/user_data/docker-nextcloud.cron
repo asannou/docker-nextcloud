@@ -1,3 +1,3 @@
 #!/bin/sh
 /etc/rc.d/init.d/docker-nextcloud update
-/usr/bin/docker images -f "dangling=true" -q | /usr/bin/xargs -r /usr/bin/docker rmi
+docker system prune --force

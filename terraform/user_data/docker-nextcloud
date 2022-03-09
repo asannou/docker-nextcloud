@@ -24,28 +24,32 @@
 
 prog="docker"
 exec="/usr/bin/$prog"
+
 name="nextcloud"
-proxyname="nextcloud-proxy"
-imageversion="22"
-imagebranch="-strict"
-imagetag="$imageversion$imagebranch"
-image="asannou/nextcloud:$imagetag"
-proxyimage="asannou/nextcloud-sharing-only-proxy:$imagetag"
+proxy_name="nextcloud-proxy"
+
+image_repository="asannou/nextcloud"
+proxy_image_repository="asannou/nextcloud-sharing-only-proxy"
+
+image_version="22"
+image_branch="-strict"
+image_tag="$image_version$image_branch"
+
+image="$image_repository:$image_tag"
+proxy_image="$proxy_image_repository:$image_tag"
+
 volume="/volume"
 port="80"
-internalport="8000"
-
-run() {
-    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
-    $exec run -d --log-driver=syslog --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
-}
+internal_port="8000"
 
 start() {
-    $exec start $name $proxyname || run
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
+    $exec run -d --log-driver=syslog --name $proxy_name -p ${internal_port}:8000 -p ${port}:80 --link $name $proxy_image > /dev/null
 }
 
 stop() {
-    $exec stop $proxyname $name
+    $exec stop $proxy_name $name
+    $exec rm $proxy_name $name
 }
 
 status() {
@@ -57,51 +61,64 @@ restart() {
     start
 }
 
-rm() {
-    $exec rm -f $proxyname $name
-}
-
 pull() {
     $exec pull $image > /dev/null
-    $exec pull $proxyimage > /dev/null
+    $exec pull $proxy_image > /dev/null
+}
+
+is_running() {
+    test -z "$(status)"
+}
+
+get_image_id() {
+    $exec inspect --format='{{.Id}}' --type=image $1
+}
+
+get_image_id_from_container() {
+    $exec inspect --format='{{.Image}}' --type=container $1
+}
+
+is_updated() {
+    latest_image_id=$(get_image_id $image)
+    latest_proxy_image_id=$(get_image_id $proxy_image)
+    test "$latest_image_id" != "$1" || test "$latest_proxy_image_id" != "$2"
+}
+
+tag_old_images() {
+    unixtime=$(date +%s)
+    $exec tag "$1" "$image-$unixtime"
+    $exec tag "$2" "$proxy_image-$unixtime"
+}
+
+remove_old_images() {
+    $exec images --format '{{.CreatedAt}} {{.ID}}' $1 | sort -r | awk '{ print $NF }' | tail -n +5 | while read image_id
+    do
+        $exec rmi $image_id > /dev/null
+    done
+}
+
+prune() {
+    remove_old_images $image_repository
+    remove_old_images $proxy_image_repository
 }
 
 update() {
     pull
-    [ "$($exec inspect --format='{{.Id}}' --type=image $image)" = "$($exec inspect --format='{{.Image}}' --type=container $name)" ] &&
-    [ "$($exec inspect --format='{{.Id}}' --type=image $proxyimage)" = "$($exec inspect --format='{{.Image}}' --type=container $proxyname)" ] && return
-    stop
-    rm
-    run
+    is_running && return
+    image_id=$(get_image_id_from_container $name)
+    proxy_image_id=$(get_image_id_from_container $proxy_name)
+    is_updated "$image_id" "$proxy_image_id" || return
+    restart
+    tag_old_images "$image_id" "$proxy_image_id"
+    prune
 }
 
 case "$1" in
-    start)
-        $1
-        ;;
-    stop)
-        $1
-        ;;
-    status)
-        $1
-        ;;
-    restart)
-        $1
-        ;;
-    run)
-        $1
-        ;;
-    rm)
-        $1
-        ;;
-    pull)
-        $1
-        ;;
-    update)
+    start|stop|status|restart|pull|update)
         $1
         ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|run|rm|pull|update}"
+        echo $"Usage: $0 {start|stop|status|restart|pull|update}"
         exit 2
 esac
 

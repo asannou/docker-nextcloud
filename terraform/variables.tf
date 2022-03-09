@@ -12,7 +12,7 @@ variable "vpc_id" {
 }
 
 variable "subnet_prefix" {
-  default = "172.31.0.0/24"
+  #default = "172.31.0.0/24"
 }
 
 variable "subnet_newbits" {
