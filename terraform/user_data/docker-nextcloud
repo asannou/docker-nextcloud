@@ -67,7 +67,7 @@ pull() {
 }
 
 is_running() {
-    test -z "$(status)"
+    test -n "$(status)"
 }
 
 get_image_id() {
@@ -104,7 +104,7 @@ prune() {
 
 update() {
     pull
-    is_running && return
+    is_running || return
     image_id=$(get_image_id_from_container $name)
     proxy_image_id=$(get_image_id_from_container $proxy_name)
     is_updated "$image_id" "$proxy_image_id" || return
