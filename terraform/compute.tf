@@ -154,7 +154,7 @@ resource "aws_instance" "web" {
   associate_public_ip_address = true
   root_block_device {
     volume_type = "gp2"
-    volume_size = 8
+    volume_size = 32
     encrypted   = true
     kms_key_id  = aws_kms_key.nextcloud.arn
   }
