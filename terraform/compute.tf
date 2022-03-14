@@ -131,19 +131,14 @@ data "template_cloudinit_config" "user_data" {
   base64_encode = true
   part {
     content_type = "text/cloud-config"
-    content      = data.template_file.user_data.rendered
-  }
-}
-
-data "template_file" "user_data" {
-  template = file("user_data.tpl.yml")
-  vars = {
-    web_instance_timezone  = var.web_instance_timezone
-    yum-cron-security_conf = base64encode(file("user_data/yum-cron-security.conf"))
-    yum-security_cron      = base64encode(file("user_data/yum-security.cron"))
-    post-yum-security_cron = base64encode(file("user_data/post-yum-security.cron"))
-    docker-nextcloud       = base64encode(file("user_data/docker-nextcloud"))
-    docker-nextcloud_cron  = base64encode(file("user_data/docker-nextcloud.cron"))
+    content = templatefile("${path.module}/user_data.tpl.yml", {
+      web_instance_timezone  = var.web_instance_timezone
+      yum-cron-security_conf = base64encode(file("${path.module}/user_data/yum-cron-security.conf"))
+      yum-security_cron      = base64encode(file("${path.module}/user_data/yum-security.cron"))
+      post-yum-security_cron = base64encode(file("${path.module}/user_data/post-yum-security.cron"))
+      docker-nextcloud       = base64encode(file("${path.module}/user_data/docker-nextcloud"))
+      docker-nextcloud_cron  = base64encode(file("${path.module}/user_data/docker-nextcloud.cron"))
+    })
   }
 }
 
