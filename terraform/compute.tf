@@ -7,6 +7,7 @@ resource "aws_security_group" "elb-internal" {
 }
 
 resource "aws_security_group_rule" "elb-internal-ingress" {
+  count             = var.cidr_internal == null ? 0 : 1
   security_group_id = aws_security_group.elb-internal.id
   type              = "ingress"
   protocol          = "tcp"
