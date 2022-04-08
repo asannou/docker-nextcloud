@@ -197,6 +197,7 @@ resource "aws_volume_attachment" "volume_attachment" {
 
 resource "aws_s3_bucket" "alb_log" {
   bucket_prefix = "nextcloud-alb-logs-"
+  force_destroy = var.s3_bucket_force_destroy
   tags = {
     Name = "nextcloud-alb"
   }

@@ -165,6 +165,7 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
 
 resource "aws_s3_bucket" "waf_logging" {
   bucket_prefix = "nextcloud-waf-logs-"
+  force_destroy = var.s3_bucket_force_destroy
   tags = {
     Name = "nextcloud-waf"
   }

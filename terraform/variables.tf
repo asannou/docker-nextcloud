@@ -57,6 +57,10 @@ variable "db_password" {
   type = string
 }
 
+variable "db_skip_final_snapshot" {
+  default = false
+}
+
 variable "db_apply_immediately" {
   default = false
 }
@@ -91,5 +95,9 @@ variable "certificate_name" {
 
 variable "certificate_id" {
   default = null
+}
+
+variable "s3_bucket_force_destroy" {
+  default = false
 }
 

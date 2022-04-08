@@ -35,6 +35,7 @@ resource "aws_db_instance" "db" {
   ca_cert_identifier          = "rds-ca-2019"
   storage_encrypted           = true
   kms_key_id                  = aws_kms_key.nextcloud.arn
+  skip_final_snapshot         = var.db_skip_final_snapshot
   apply_immediately           = var.db_apply_immediately
   lifecycle {
     ignore_changes = [
