@@ -1,6 +1,9 @@
 resource "aws_security_group" "elb-internal" {
-  name   = "nextcloud-elb-internal"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-elb-internal-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-elb-internal"
   }
@@ -26,8 +29,11 @@ resource "aws_security_group_rule" "elb-internal-egress" {
 }
 
 resource "aws_security_group" "elb-external" {
-  name   = "nextcloud-elb-external"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-elb-external-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-elb-external"
   }
@@ -52,8 +58,11 @@ resource "aws_security_group_rule" "elb-external-egress" {
 }
 
 resource "aws_security_group" "web-internal" {
-  name   = "nextcloud-web-internal"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-web-internal-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-web-internal"
   }
@@ -69,8 +78,11 @@ resource "aws_security_group_rule" "web-internal-ingress" {
 }
 
 resource "aws_security_group" "web-external" {
-  name   = "nextcloud-web-external"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-web-external-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-web-external"
   }
@@ -86,8 +98,11 @@ resource "aws_security_group_rule" "web-external-ingress" {
 }
 
 resource "aws_security_group" "web-all" {
-  name   = "nextcloud-web-all"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-web-all-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-web-all"
   }
@@ -255,7 +270,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "alb_log" {
 }
 
 resource "aws_lb" "alb" {
-  name               = "nextcloud"
+  name_prefix        = "nc-"
   internal           = false
   load_balancer_type = "application"
   security_groups = [
@@ -292,10 +307,10 @@ resource "aws_lb_listener" "alb-internal" {
 }
 
 resource "aws_lb_target_group" "alb-internal" {
-  name     = "nextcloud-internal"
-  port     = 8000
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name_prefix = "nc-in-"
+  port        = 8000
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
   health_check {
     interval            = 30
     timeout             = 5
@@ -325,10 +340,10 @@ resource "aws_lb_listener" "alb-external" {
 }
 
 resource "aws_lb_target_group" "alb-external" {
-  name     = "nextcloud-external"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name_prefix = "nc-ex-"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
   health_check {
     interval            = 30
     timeout             = 5

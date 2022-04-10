@@ -1,11 +1,11 @@
 resource "aws_elasticache_subnet_group" "elasticache" {
-  name       = "nextcloud"
+  name       = "nextcloud-${random_id.nextcloud.dec}"
   subnet_ids = [for subnet in aws_subnet.private : subnet.id]
 }
 
 resource "aws_security_group" "elasticache" {
-  name   = "nextcloud-elasticache-redis"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-elasticache-redis-"
+  vpc_id      = var.vpc_id
   tags = {
     Name = "nextcloud-elasticache-redis"
   }
@@ -21,7 +21,7 @@ resource "aws_security_group_rule" "elasticache-ingress" {
 }
 
 resource "aws_elasticache_replication_group" "elasticache" {
-  replication_group_id       = "nextcloud"
+  replication_group_id       = "nextcloud-${random_id.nextcloud.dec}"
   description                = "nextcloud"
   num_cache_clusters         = 1
   node_type                  = var.elasticache_node_type

@@ -1,6 +1,9 @@
 resource "aws_security_group" "db-mysql" {
-  name   = "nextcloud-db-mysql"
-  vpc_id = var.vpc_id
+  name_prefix = "nextcloud-db-mysql-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-db-mysql"
   }
@@ -16,7 +19,7 @@ resource "aws_security_group_rule" "db-mysql-ingress" {
 }
 
 resource "aws_db_instance" "db" {
-  identifier                  = "nextcloud"
+  identifier_prefix           = "nextcloud-"
   engine                      = "mysql"
   engine_version              = var.db_engine_version
   instance_class              = var.db_instance_class
@@ -39,6 +42,7 @@ resource "aws_db_instance" "db" {
   apply_immediately           = var.db_apply_immediately
   lifecycle {
     ignore_changes = [
+      identifier_prefix,
       username,
       password,
       snapshot_identifier

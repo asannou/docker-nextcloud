@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "nextcloud" {
 }
 
 resource "aws_iam_role" "nextcloud" {
-  name               = "EC2RoleNextcloud"
+  name_prefix        = "EC2RoleNextcloud-"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.nextcloud.json
 }

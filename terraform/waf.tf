@@ -1,5 +1,5 @@
 resource "aws_wafv2_web_acl" "nextcloud" {
-  name  = "nextcloud"
+  name  = "nextcloud-${random_id.nextcloud.dec}"
   scope = "REGIONAL"
   default_action {
     allow {}
@@ -151,7 +151,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "nextcloud" {
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
-  name        = "aws-waf-logs-nextcloud"
+  name        = "aws-waf-logs-nextcloud-${random_id.nextcloud.dec}"
   destination = "s3"
   s3_configuration {
     bucket_arn         = aws_s3_bucket.waf_logging.arn
@@ -190,7 +190,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "waf_logging" {
 }
 
 resource "aws_iam_role" "waf_logging" {
-  name               = "FirehoseRoleNextcloud"
+  name_prefix        = "FirehoseRoleNextcloud-"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.waf_logging.json
 }

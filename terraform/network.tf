@@ -84,8 +84,11 @@ resource "aws_route_table_association" "private" {
 }
 
 resource "aws_db_subnet_group" "db" {
-  name       = "nextcloud"
-  subnet_ids = [for subnet in aws_subnet.private : subnet.id]
+  name_prefix = "nextcloud-"
+  subnet_ids  = [for subnet in aws_subnet.private : subnet.id]
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-private"
   }

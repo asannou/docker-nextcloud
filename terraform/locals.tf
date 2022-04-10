@@ -8,3 +8,7 @@ locals {
 
 data "aws_caller_identity" "aws" {}
 
+resource "random_id" "nextcloud" {
+  byte_length = 8
+}
+
