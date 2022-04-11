@@ -12,6 +12,9 @@ resource "aws_iam_role" "nextcloud" {
   name_prefix        = "EC2RoleNextcloud-"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.nextcloud.json
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
 }
 
 resource "aws_iam_instance_profile" "nextcloud" {

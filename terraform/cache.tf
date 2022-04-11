@@ -1,11 +1,17 @@
 resource "aws_elasticache_subnet_group" "elasticache" {
   name       = "nextcloud-${random_id.nextcloud.dec}"
   subnet_ids = [for subnet in aws_subnet.private : subnet.id]
+  lifecycle {
+    ignore_changes = [name]
+  }
 }
 
 resource "aws_security_group" "elasticache" {
   name_prefix = "nextcloud-elasticache-redis-"
   vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-elasticache-redis"
   }
@@ -38,7 +44,8 @@ resource "aws_elasticache_replication_group" "elasticache" {
   kms_key_id                 = aws_kms_key.nextcloud.arn
   lifecycle {
     ignore_changes = [
-      engine_version
+      replication_group_id,
+      engine_version,
     ]
   }
 }

@@ -138,6 +138,9 @@ resource "aws_wafv2_web_acl" "nextcloud" {
     metric_name                = "nextcloud"
     sampled_requests_enabled   = true
   }
+  lifecycle {
+    ignore_changes = [name]
+  }
 }
 
 resource "aws_wafv2_web_acl_association" "nextcloud" {
@@ -157,6 +160,9 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
     bucket_arn         = aws_s3_bucket.waf_logging.arn
     role_arn           = aws_iam_role.waf_logging.arn
     compression_format = "GZIP"
+  }
+  lifecycle {
+    ignore_changes = [name]
   }
   tags = {
     Name = "nextcloud-waf"
@@ -193,6 +199,9 @@ resource "aws_iam_role" "waf_logging" {
   name_prefix        = "FirehoseRoleNextcloud-"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.waf_logging.json
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
 }
 
 data "aws_iam_policy_document" "waf_logging" {

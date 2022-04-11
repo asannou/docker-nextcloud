@@ -289,6 +289,9 @@ resource "aws_lb" "alb" {
     bucket  = aws_s3_bucket.alb_log.bucket
     enabled = true
   }
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-alb"
   }
@@ -318,6 +321,9 @@ resource "aws_lb_target_group" "alb-internal" {
     healthy_threshold   = 2
     path                = "/status.php"
     matcher             = "400"
+  }
+  lifecycle {
+    ignore_changes = [name_prefix]
   }
 }
 
@@ -350,6 +356,9 @@ resource "aws_lb_target_group" "alb-external" {
     unhealthy_threshold = 2
     healthy_threshold   = 2
     matcher             = "400"
+  }
+  lifecycle {
+    ignore_changes = [name_prefix]
   }
 }
 
