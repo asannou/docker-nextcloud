@@ -1,18 +1,9 @@
-variable "aws_region" {
-  default = "ap-northeast-1"
-}
-
-variable "default_tags" {
-  default = {
-  }
-}
-
 variable "vpc_id" {
-  #default = "vpc-deadbeef"
+  type = string
 }
 
 variable "subnet_prefix" {
-  #default = "172.31.0.0/24"
+  type = string
 }
 
 variable "subnet_newbits" {
@@ -28,9 +19,7 @@ variable "subnet_private_netnum" {
 }
 
 variable "cidr_internal" {
-  default = [
-    #"203.0.113.1/32"
-  ]
+  type = list(string)
 }
 
 variable "db_engine_version" {
@@ -86,11 +75,11 @@ variable "web_instance_timezone" {
 }
 
 variable "volume_size" {
-  default = 100
+  default = 250
 }
 
 variable "certificate_name" {
-  #default = "nextcloud"
+  default = "nextcloud"
 }
 
 variable "certificate_id" {
