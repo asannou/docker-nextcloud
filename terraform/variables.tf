@@ -79,10 +79,12 @@ variable "volume_size" {
 }
 
 variable "certificate_name" {
-  default = "nextcloud"
+  type    = string
+  default = null
 }
 
 variable "certificate_id" {
+  type    = string
   default = null
 }
 
