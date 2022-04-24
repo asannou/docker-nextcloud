@@ -277,10 +277,7 @@ resource "aws_lb" "alb" {
     aws_security_group.elb-internal.id,
     aws_security_group.elb-external.id,
   ]
-  subnets = [
-    aws_subnet.public[0].id,
-    aws_subnet.public[1].id,
-  ]
+  subnets                    = [for subnet in aws_subnet.public : subnet.id]
   idle_timeout               = 3600
   enable_http2               = false
   enable_waf_fail_open       = true
