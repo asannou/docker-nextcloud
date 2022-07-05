@@ -1,14 +1,14 @@
 FROM php:7.4-apache
 
-ARG VERSION=22.2.3
-ARG USER_SAML_VERSION=4.1.1
+ARG VERSION=23.0.6
+ARG USER_SAML_VERSION=5.0.2
 
 WORKDIR /root
 
-# https://docs.nextcloud.com/server/22/admin_manual/installation/source_installation.html#additional-apache-configurations
+# https://docs.nextcloud.com/server/23/admin_manual/installation/source_installation.html#additional-apache-configurations
 RUN a2enmod rewrite headers env dir mime
 
-# https://docs.nextcloud.com/server/22/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+# https://docs.nextcloud.com/server/23/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
 RUN apt-get update \
   && apt-get install -y --no-install-recommends cron bzip2 unzip libpng-dev libfreetype6-dev libzip-dev libbz2-dev libicu-dev libgmp-dev \
@@ -39,29 +39,29 @@ RUN apt-get update \
 
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/cron
 
-# https://docs.nextcloud.com/server/22/admin_manual/configuration_server/caching_configuration.html
+# https://docs.nextcloud.com/server/23/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
   && docker-php-ext-enable apcu redis
 
 COPY php-apcu.ini /usr/local/etc/php/conf.d/
 
-# https://docs.nextcloud.com/server/22/admin_manual/installation/server_tuning.html#enable-php-opcache
+# https://docs.nextcloud.com/server/23/admin_manual/installation/server_tuning.html#enable-php-opcache
 COPY php-opcache.ini /usr/local/etc/php/conf.d/
 
 COPY php-memory.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-# https://docs.nextcloud.com/server/22/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-php
+# https://docs.nextcloud.com/server/23/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-php
 COPY php-upload.ini /usr/local/etc/php/conf.d/
 
-RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud/user_saml/releases/download/v${USER_SAML_VERSION}/user_saml-${USER_SAML_VERSION}.tar.gz \
+RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud-releases/user_saml/releases/download/v${USER_SAML_VERSION}/user_saml-v${USER_SAML_VERSION}.tar.gz \
   && tar -zxf user_saml.tar.gz -C /var/www/nextcloud/apps/ \
   && rm user_saml.tar.gz
 
 RUN chown -R www-data:www-data /var/www/nextcloud/
 
-# https://docs.nextcloud.com/server/22/admin_manual/installation/source_installation.html#apache-web-server-configuration
+# https://docs.nextcloud.com/server/23/admin_manual/installation/source_installation.html#apache-web-server-configuration
 COPY nextcloud.conf /etc/apache2/sites-available/
 RUN a2ensite nextcloud.conf
 
