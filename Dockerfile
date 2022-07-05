@@ -6,7 +6,7 @@ ARG USER_SAML_VERSION=5.0.2
 WORKDIR /root
 
 # https://docs.nextcloud.com/server/23/admin_manual/installation/source_installation.html#additional-apache-configurations
-RUN a2enmod rewrite headers env dir mime sed
+RUN a2enmod rewrite headers env dir mime
 
 # https://docs.nextcloud.com/server/23/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
 # Required, Database connectors, Recommended packages
