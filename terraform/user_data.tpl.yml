@@ -1,0 +1,61 @@
+#cloud-config
+
+timezone: "${web_instance_timezone}"
+
+bootcmd:
+  - until test -e /dev/nvme1n1; do sleep 1; done
+
+fs_setup:
+  - device: /dev/nvme1n1
+    filesystem: ext4
+    overwrite: false
+
+mounts:
+  - [ /dev/nvme1n1, /volume ]
+
+repo_update: true
+repo_upgrade: all
+
+packages:
+  - yum-cron
+  - docker
+
+write_files:
+  - encoding: b64
+    content: "${yum-cron-security_conf}"
+    owner: root:root
+    path: /etc/yum/yum-cron-security.conf
+    permissions: '0644'
+  - encoding: b64
+    content: "${yum-security_cron}"
+    owner: root:root
+    path: /etc/cron.daily/0yum-security.cron
+    permissions: '0744'
+  - encoding: b64
+    content: "${post-yum-security_cron}"
+    owner: root:root
+    path: /etc/cron.daily/1post-yum-security.cron
+    permissions: '0744'
+  - encoding: b64
+    content: "${docker-nextcloud}"
+    owner: root:root
+    path: /etc/rc.d/init.d/docker-nextcloud
+    permissions: '0700'
+  - encoding: b64
+    content: "${docker-nextcloud_cron}"
+    owner: root:root
+    path: /etc/cron.daily/docker-nextcloud.cron
+    permissions: '0744'
+
+runcmd:
+  - systemctl enable yum-cron
+  - systemctl enable docker
+  - systemctl start docker
+  - systemctl enable docker-nextcloud
+
+power_state:
+  delay: now
+  mode: reboot
+  timeout: 30
+  condition: true
+

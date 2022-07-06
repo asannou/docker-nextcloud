@@ -1,33 +1,25 @@
-variable "aws_region" {
-  default = "ap-northeast-1"
-}
-
 variable "vpc_id" {
-#  default = "vpc-deadbeef"
+  type = string
 }
 
-variable "gateway_id" {
-#  default = "igw-deadbeef"
+variable "subnet_prefix" {
+  type = string
 }
 
-variable "subnet_public" {
-  default = [
-#    "172.31.0.0/28",
-#    "172.31.0.48/28",
-  ]
+variable "subnet_newbits" {
+  default = 4
 }
 
-variable "subnet_private" {
-  default = [
-#    "172.31.0.16/28",
-#    "172.31.0.32/28",
-  ]
+variable "subnet_public_netnum" {
+  default = [0, 3]
+}
+
+variable "subnet_private_netnum" {
+  default = [1, 2]
 }
 
 variable "cidr_internal" {
-  default = [
-#    "203.0.113.1/32"
-  ]
+  type = list(string)
 }
 
 variable "db_engine_version" {
@@ -47,11 +39,19 @@ variable "db_allocated_storage" {
 }
 
 variable "db_username" {
-  default = ""
+  type = string
 }
 
 variable "db_password" {
-  default = ""
+  type = string
+}
+
+variable "db_skip_final_snapshot" {
+  default = false
+}
+
+variable "db_apply_immediately" {
+  default = false
 }
 
 variable "elasticache_engine_version" {
@@ -66,10 +66,6 @@ variable "elasticache_node_type" {
   default = "cache.t3.micro"
 }
 
-variable "key_file_name" {
-  default = "id_nextcloud"
-}
-
 variable "web_instance_type" {
   default = "t3.micro"
 }
@@ -79,10 +75,20 @@ variable "web_instance_timezone" {
 }
 
 variable "volume_size" {
-  default = 100
+  default = 250
 }
 
-variable "server_certificate_name" {
-#  default = "nextcloud"
+variable "certificate_name" {
+  type    = string
+  default = null
+}
+
+variable "certificate_id" {
+  type    = string
+  default = null
+}
+
+variable "s3_bucket_force_destroy" {
+  default = false
 }
 
