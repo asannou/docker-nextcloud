@@ -52,7 +52,7 @@ COPY php-opcache.ini /usr/local/etc/php/conf.d/
 COPY php-memory.ini /usr/local/etc/php/conf.d/
 COPY php-sendmail.ini /usr/local/etc/php/conf.d/
 
-# https://docs.nextcloud.com/server/23/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-php
+# https://docs.nextcloud.com/server/24/admin_manual/configuration_files/big_file_upload_configuration.html#configuring-php
 COPY php-upload.ini /usr/local/etc/php/conf.d/
 
 RUN curl -s -L -o user_saml.tar.gz https://github.com/nextcloud-releases/user_saml/releases/download/v${USER_SAML_VERSION}/user_saml-v${USER_SAML_VERSION}.tar.gz \
