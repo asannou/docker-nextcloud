@@ -1,0 +1,39 @@
+#cloud-config
+
+timezone: "${web_instance_timezone}"
+
+bootcmd:
+  - until test -e /dev/nvme1n1; do sleep 1; done
+
+fs_setup:
+  - device: /dev/nvme1n1
+    filesystem: ext4
+    overwrite: false
+
+mounts:
+  - [ /dev/nvme1n1, /volume ]
+
+repo_update: true
+repo_upgrade: all
+
+packages:
+  - docker
+
+write_files:
+  - encoding: b64
+    content: "${docker-nextcloud}"
+    owner: root:root
+    path: /etc/rc.d/init.d/docker-nextcloud
+    permissions: '0700'
+
+runcmd:
+  - systemctl enable docker
+  - systemctl start docker
+  - systemctl enable docker-nextcloud
+
+power_state:
+  delay: now
+  mode: reboot
+  timeout: 30
+  condition: true
+

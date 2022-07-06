@@ -1,299 +1,362 @@
-resource "aws_key_pair" "key" {
-  key_name = "nextcloud"
-  public_key = "${file("${var.key_file_name}.pub")}"
-}
-
 resource "aws_security_group" "elb-internal" {
-  name = "nextcloud-elb-internal"
-  vpc_id = "${var.vpc_id}"
-  tags {
+  name_prefix = "nextcloud-elb-internal-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
+  tags = {
     Name = "nextcloud-elb-internal"
   }
 }
 
 resource "aws_security_group_rule" "elb-internal-ingress" {
-  security_group_id = "${aws_security_group.elb-internal.id}"
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 8000
-  to_port = 8000
-  cidr_blocks = "${var.cidr_internal}"
+  count             = var.cidr_internal == null ? 0 : 1
+  security_group_id = aws_security_group.elb-internal.id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 8000
+  to_port           = 8000
+  cidr_blocks       = var.cidr_internal
 }
 
 resource "aws_security_group_rule" "elb-internal-egress" {
-  security_group_id = "${aws_security_group.elb-internal.id}"
-  type = "egress"
-  protocol = "tcp"
-  from_port = 8000
-  to_port = 8000
-  source_security_group_id = "${aws_security_group.web-internal.id}"
+  security_group_id        = aws_security_group.elb-internal.id
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 8000
+  to_port                  = 8000
+  source_security_group_id = aws_security_group.web-internal.id
 }
 
 resource "aws_security_group" "elb-external" {
-  name = "nextcloud-elb-external"
-  vpc_id = "${var.vpc_id}"
-  tags {
+  name_prefix = "nextcloud-elb-external-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
+  tags = {
     Name = "nextcloud-elb-external"
   }
 }
 
 resource "aws_security_group_rule" "elb-external-ingress" {
-  security_group_id = "${aws_security_group.elb-external.id}"
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 443
-  to_port = 443
-  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.elb-external.id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_security_group_rule" "elb-external-egress" {
-  security_group_id = "${aws_security_group.elb-external.id}"
-  type = "egress"
-  protocol = "tcp"
-  from_port = 80
-  to_port = 80
-  source_security_group_id = "${aws_security_group.web-external.id}"
+  security_group_id        = aws_security_group.elb-external.id
+  type                     = "egress"
+  protocol                 = "tcp"
+  from_port                = 80
+  to_port                  = 80
+  source_security_group_id = aws_security_group.web-external.id
 }
 
 resource "aws_security_group" "web-internal" {
-  name = "nextcloud-web-internal"
-  vpc_id = "${var.vpc_id}"
-  tags {
+  name_prefix = "nextcloud-web-internal-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
+  tags = {
     Name = "nextcloud-web-internal"
   }
 }
 
 resource "aws_security_group_rule" "web-internal-ingress" {
-  security_group_id = "${aws_security_group.web-internal.id}"
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 8000
-  to_port = 8000
-  source_security_group_id = "${aws_security_group.elb-internal.id}"
+  security_group_id        = aws_security_group.web-internal.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 8000
+  to_port                  = 8000
+  source_security_group_id = aws_security_group.elb-internal.id
 }
 
 resource "aws_security_group" "web-external" {
-  name = "nextcloud-web-external"
-  vpc_id = "${var.vpc_id}"
-  tags {
+  name_prefix = "nextcloud-web-external-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
+  tags = {
     Name = "nextcloud-web-external"
   }
 }
 
 resource "aws_security_group_rule" "web-external-ingress" {
-  security_group_id = "${aws_security_group.web-external.id}"
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 80
-  to_port = 80
-  source_security_group_id = "${aws_security_group.elb-external.id}"
-}
-
-resource "aws_security_group" "web-ssh" {
-  name = "nextcloud-web-ssh"
-  vpc_id = "${var.vpc_id}"
-  tags {
-    Name = "nextcloud-web-ssh"
-  }
-}
-
-resource "aws_security_group_rule" "web-ssh-ingress" {
-  security_group_id = "${aws_security_group.web-ssh.id}"
-  type = "ingress"
-  protocol = "tcp"
-  from_port = 22
-  to_port = 22
-  cidr_blocks = "${var.cidr_internal}"
+  security_group_id        = aws_security_group.web-external.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 80
+  to_port                  = 80
+  source_security_group_id = aws_security_group.elb-external.id
 }
 
 resource "aws_security_group" "web-all" {
-  name = "nextcloud-web-all"
-  vpc_id = "${var.vpc_id}"
-  tags {
+  name_prefix = "nextcloud-web-all-"
+  vpc_id      = var.vpc_id
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
+  tags = {
     Name = "nextcloud-web-all"
   }
 }
 
 resource "aws_security_group_rule" "web-all-egress" {
-  security_group_id = "${aws_security_group.web-all.id}"
-  type = "egress"
-  protocol = "all"
-  from_port = 0
-  to_port = 0
-  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.web-all.id
+  type              = "egress"
+  protocol          = "all"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 data "aws_ami" "ami" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
   filter {
-    name = "architecture"
+    name   = "architecture"
     values = ["x86_64"]
   }
   filter {
-    name = "root-device-type"
+    name   = "root-device-type"
     values = ["ebs"]
   }
   filter {
-    name = "name"
+    name   = "name"
     values = ["amzn2-ami-hvm-2.0.*"]
   }
   filter {
-    name = "virtualization-type"
+    name   = "virtualization-type"
     values = ["hvm"]
   }
   filter {
-    name = "block-device-mapping.volume-type"
+    name   = "block-device-mapping.volume-type"
     values = ["gp2"]
   }
 }
 
+data "template_cloudinit_config" "user_data" {
+  gzip          = true
+  base64_encode = true
+  part {
+    content_type = "text/cloud-config"
+    content = templatefile("${path.module}/user_data.tpl.yml", {
+      web_instance_timezone = var.web_instance_timezone
+      docker-nextcloud      = base64encode(file("${path.module}/user_data/docker-nextcloud"))
+    })
+  }
+}
+
 resource "aws_instance" "web" {
-  ami = "${data.aws_ami.ami.id}"
-  instance_type = "${var.web_instance_type}"
-  subnet_id = "${aws_subnet.public0.id}"
+  ami                         = data.aws_ami.ami.id
+  instance_type               = var.web_instance_type
+  subnet_id                   = aws_subnet.public[0].id
   associate_public_ip_address = true
-  root_block_device = {
+  root_block_device {
     volume_type = "gp2"
-    volume_size = 8
+    volume_size = 32
+    encrypted   = true
+    kms_key_id  = aws_kms_key.nextcloud.arn
   }
-  key_name = "${aws_key_pair.key.key_name}"
   vpc_security_group_ids = [
-    "${aws_security_group.web-all.id}",
-    "${aws_security_group.web-ssh.id}",
-    "${aws_security_group.web-internal.id}",
-    "${aws_security_group.web-external.id}",
+    aws_security_group.web-all.id,
+    aws_security_group.web-internal.id,
+    aws_security_group.web-external.id,
   ]
-  user_data = <<EOD
-#cloud-config
-timezone: "${var.web_instance_timezone}"
-EOD
-  provisioner "file" {
-    source = "files/"
-    destination = "/home/ec2-user"
-    connection {
-      type = "ssh"
-      user = "ec2-user"
-      private_key = "${file("${var.key_file_name}")}"
-    }
+  user_data_base64     = data.template_cloudinit_config.user_data.rendered
+  iam_instance_profile = aws_iam_instance_profile.nextcloud.name
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
-  iam_instance_profile = "${aws_iam_instance_profile.nextcloud.name}"
   lifecycle {
     ignore_changes = [
-      "ami"
+      ami,
+      user_data,
+      user_data_base64,
     ]
   }
-  tags {
+  tags = {
     Name = "nextcloud-web"
   }
 }
 
 resource "aws_ebs_volume" "volume" {
-  availability_zone = "${aws_subnet.public0.availability_zone}"
-  type = "gp2"
-  size = "${var.volume_size}"
-  tags {
+  availability_zone = aws_subnet.public[0].availability_zone
+  type              = "gp2"
+  size              = var.volume_size
+  encrypted         = true
+  kms_key_id        = aws_kms_key.nextcloud.arn
+  tags = {
     Name = "nextcloud"
   }
 }
 
 resource "aws_volume_attachment" "volume_attachment" {
-  volume_id = "${aws_ebs_volume.volume.id}"
-  instance_id = "${aws_instance.web.id}"
-  device_name = "/dev/xvdh"
+  volume_id    = aws_ebs_volume.volume.id
+  instance_id  = aws_instance.web.id
+  device_name  = "/dev/xvdh"
   skip_destroy = true
-  provisioner "remote-exec" {
-    connection {
-      type = "ssh"
-      user = "ec2-user"
-      host = "${aws_instance.web.public_ip}"
-      private_key = "${file("${var.key_file_name}")}"
+}
+
+resource "aws_s3_bucket" "alb_log" {
+  bucket_prefix = "nextcloud-alb-logs-"
+  force_destroy = var.s3_bucket_force_destroy
+  tags = {
+    Name = "nextcloud-alb"
+  }
+}
+
+resource "aws_s3_bucket_policy" "alb_log" {
+  bucket = aws_s3_bucket.alb_log.id
+  policy = data.aws_iam_policy_document.alb_logging.json
+}
+
+data "aws_elb_service_account" "current" {}
+
+data "aws_iam_policy_document" "alb_logging" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_elb_service_account.current.arn]
     }
-    inline = "sudo sh /home/ec2-user/install.sh"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.alb_log.arn}/AWSLogs/${data.aws_caller_identity.aws.account_id}/*"]
+  }
+  statement {
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.alb_log.arn}/AWSLogs/${data.aws_caller_identity.aws.account_id}/*"]
+  }
+  statement {
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.alb_log.arn]
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "alb_log" {
+  bucket                  = aws_s3_bucket.alb_log.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "alb_log" {
+  bucket = aws_s3_bucket.alb_log.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
 resource "aws_lb" "alb" {
-  name = "nextcloud"
-  internal = false
+  name_prefix        = "nc-"
+  internal           = false
   load_balancer_type = "application"
   security_groups = [
-    "${aws_security_group.elb-internal.id}",
-    "${aws_security_group.elb-external.id}",
+    aws_security_group.elb-internal.id,
+    aws_security_group.elb-external.id,
   ]
-  subnets = [
-    "${aws_subnet.public0.id}",
-    "${aws_subnet.public1.id}",
-  ]
-  idle_timeout = 3600
-  enable_http2 = false
+  subnets                    = [for subnet in aws_subnet.public : subnet.id]
+  idle_timeout               = 3600
+  enable_http2               = false
+  drop_invalid_header_fields = true
+  access_logs {
+    bucket  = aws_s3_bucket.alb_log.bucket
+    enabled = true
+  }
+  lifecycle {
+    ignore_changes = [name_prefix]
+  }
   tags = {
     Name = "nextcloud-alb"
   }
 }
 
 resource "aws_lb_listener" "alb-internal" {
-  load_balancer_arn = "${aws_lb.alb.arn}"
-  port = "8000"
-  protocol = "HTTPS"
-  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "8000"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = local.certificate_arn
   default_action {
-    type = "forward"
-    target_group_arn = "${aws_lb_target_group.alb-internal.arn}"
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb-internal.arn
   }
 }
 
 resource "aws_lb_target_group" "alb-internal" {
-  name = "nextcloud-internal"
-  port = 8000
-  protocol = "HTTP"
-  vpc_id = "${var.vpc_id}"
+  name_prefix = "nc-in-"
+  port        = 8000
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
   health_check {
-    interval = 30
-    timeout = 5
+    interval            = 30
+    timeout             = 5
     unhealthy_threshold = 2
-    healthy_threshold = 2
-    path = "/status.php"
-    matcher = "400"
+    healthy_threshold   = 2
+    path                = "/status.php"
+    matcher             = "400"
+  }
+  lifecycle {
+    ignore_changes = [name_prefix]
   }
 }
 
 resource "aws_lb_target_group_attachment" "alb-internal" {
-  target_group_arn = "${aws_lb_target_group.alb-internal.arn}"
-  target_id = "${aws_instance.web.id}"
-  port = 8000
+  target_group_arn = aws_lb_target_group.alb-internal.arn
+  target_id        = aws_instance.web.id
+  port             = 8000
 }
 
 resource "aws_lb_listener" "alb-external" {
-  load_balancer_arn = "${aws_lb.alb.arn}"
-  port = "443"
-  protocol = "HTTPS"
-  ssl_policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn = "arn:aws:iam::${data.aws_caller_identity.aws.account_id}:server-certificate/${var.server_certificate_name}"
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
+  certificate_arn   = local.certificate_arn
   default_action {
-    type = "forward"
-    target_group_arn = "${aws_lb_target_group.alb-external.arn}"
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb-external.arn
   }
 }
 
 resource "aws_lb_target_group" "alb-external" {
-  name = "nextcloud-external"
-  port = 80
-  protocol = "HTTP"
-  vpc_id = "${var.vpc_id}"
+  name_prefix = "nc-ex-"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
   health_check {
-    interval = 30
-    timeout = 5
+    interval            = 30
+    timeout             = 5
     unhealthy_threshold = 2
-    healthy_threshold = 2
-    matcher = "400"
+    healthy_threshold   = 2
+    matcher             = "400"
+  }
+  lifecycle {
+    ignore_changes = [name_prefix]
   }
 }
 
 resource "aws_lb_target_group_attachment" "alb-external" {
-  target_group_arn = "${aws_lb_target_group.alb-external.arn}"
-  target_id = "${aws_instance.web.id}"
-  port = 80
+  target_group_arn = aws_lb_target_group.alb-external.arn
+  target_id        = aws_instance.web.id
+  port             = 80
 }
 
