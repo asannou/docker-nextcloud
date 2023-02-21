@@ -37,6 +37,10 @@ RUN apt-get update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Remove backslashes from password generation policy
+COPY password_policy.patch /root/
+RUN patch -d /var/www/nextcloud/apps/password_policy -p 1 < password_policy.patch
+
 # https://docs.nextcloud.com/server/24/admin_manual/configuration_server/caching_configuration.html
 RUN yes '' | pecl install apcu \
   && yes '' | pecl install redis \
