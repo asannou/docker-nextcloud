@@ -6,6 +6,8 @@ services:
     container_name: nextcloud
     volumes:
       - ./volume:/volume
+    environment:
+      - FORCE_MAINTENANCE_MODE_OFF
   proxy:
     build: proxy
     image: "asannou/nextcloud-sharing-only-proxy:${DOCKER_NEXTCLOUD_IMAGE_VERSION}${DOCKER_NEXTCLOUD_IMAGE_BRANCH}"

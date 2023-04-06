@@ -38,6 +38,7 @@ then
     occ encryption:scan:legacy-format
     occ config:system:set encryption.legacy_format_support --type=boolean --value=false
   fi
+  test -n "$FORCE_MAINTENANCE_MODE_OFF" && occ maintenance:mode --off
 fi
 
 exec "$@"

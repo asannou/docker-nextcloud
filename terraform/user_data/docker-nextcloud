@@ -36,7 +36,7 @@ port="80"
 internalport="8000"
 
 run() {
-    $exec run -d --log-driver=syslog --name $name -v $volume:/volume $image > /dev/null
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume -e FORCE_MAINTENANCE_MODE_OFF=1 $image > /dev/null
     $exec run -d --log-driver=syslog --name $proxyname -p ${internalport}:8000 -p ${port}:80 --link $name $proxyimage > /dev/null
 }
 
