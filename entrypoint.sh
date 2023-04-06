@@ -66,6 +66,7 @@ then
     occ config:system:set encryption.legacy_format_support --type=boolean --value=false
   fi
   occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
+  test -n "$FORCE_MAINTENANCE_MODE_OFF" && occ maintenance:mode --off
 fi
 
 exec "$@"
