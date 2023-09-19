@@ -1,11 +1,15 @@
 version: '2'
 services:
   nextcloud:
-    build: .
+    build:
+      context: .
+      args:
+        version: "${DOCKER_NEXTCLOUD_IMAGE_VERSION}"
     image: "asannou/nextcloud:${DOCKER_NEXTCLOUD_IMAGE_VERSION}${DOCKER_NEXTCLOUD_IMAGE_BRANCH}"
     container_name: nextcloud
     volumes:
       - ./volume:/volume
+      - ./volume/nextcloud:/var/www/html
     environment:
       - FORCE_MAINTENANCE_MODE_OFF
   proxy:
