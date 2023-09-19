@@ -1,24 +1,19 @@
-#!/bin/sh
+set +u
 
-set -e
-
-CONFIG=/volume/config.php
+CONFIG=/var/www/html/config/config.php
 DATA=/volume/data
 UPLOADTMP=/volume/tmp
 
-cron
+cp -n /volume/config.php $CONFIG || true
+cp -n /root/config.php $CONFIG || true
 
-test -e $CONFIG || cp /root/config.php $CONFIG
 test -e $DATA || mkdir $DATA
 test -e $UPLOADTMP || mkdir $UPLOADTMP
 chown www-data:root $CONFIG $DATA $UPLOADTMP
 
-ln -snf $CONFIG /var/www/nextcloud/config/
-ln -snf $DATA /var/www/nextcloud/
-
 occ() {
   args=$(printf "'%s' " "$@")
-  su - -s /bin/sh -c "/usr/local/bin/php /var/www/nextcloud/occ $args" www-data
+  run_as "php /var/www/html/occ $args"
 }
 
 list_enabled_apps() {
@@ -28,6 +23,7 @@ list_enabled_apps() {
 exclude_allowed_apps() {
   grep --invert-match --line-regexp --fixed-strings 'activity
 admin_audit
+circles
 comments
 dav
 encryption
@@ -44,11 +40,12 @@ user_saml'
 
 if occ status | grep -q '\- installed: true'
 then
+  occ app:enable circles
   occ upgrade --no-interaction
   occ db:add-missing-indices
   occ db:add-missing-columns
   occ db:add-missing-primary-keys
-  occ db:convert-filecache-bigint --no-interaction
+  occ maintenance:update:htaccess
   occ config:system:set loglevel --type integer --value=1
   occ config:system:set memcache.local --value='\OC\Memcache\APCu'
   occ config:system:set trusted_proxies 0 --value=10.0.0.0/8
@@ -60,11 +57,6 @@ then
   occ config:system:set simpleSignUpLink.shown --type=boolean --value=false
   occ app:enable encryption
   occ encryption:enable
-  if [ "$(occ config:system:get encryption.legacy_format_support)" != 'false' ]
-  then
-    occ encryption:scan:legacy-format
-    occ config:system:set encryption.legacy_format_support --type=boolean --value=false
-  fi
   occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
   test -n "$FORCE_MAINTENANCE_MODE_OFF" && occ maintenance:mode --off
 fi
