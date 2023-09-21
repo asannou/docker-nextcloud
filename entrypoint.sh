@@ -24,6 +24,7 @@ comments
 dav
 encryption
 files
+files_antivirus
 files_sharing
 logreader
 nextcloud_announcements
@@ -39,6 +40,9 @@ then
   occ app:enable encryption
   occ encryption:enable
   occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
+  occ config:app:set files_antivirus av_mode --value daemon
+  occ config:app:set files_antivirus av_host --value clamav
+  occ config:app:set files_antivirus av_port --value 3310
   if [ -n "${FORCE_MAINTENANCE_MODE_OFF+x}" ]
   then
     occ maintenance:mode --off
