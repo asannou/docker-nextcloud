@@ -31,7 +31,7 @@ proxy_name="nextcloud-proxy"
 image_repository="asannou/nextcloud"
 proxy_image_repository="asannou/nextcloud-sharing-only-proxy"
 
-image_version="24"
+image_version="26"
 image_branch="-strict"
 image_tag="$image_version$image_branch"
 
@@ -43,7 +43,7 @@ port="80"
 internal_port="8000"
 
 start() {
-    $exec run -d --log-driver=syslog --name $name -v $volume:/volume -e FORCE_MAINTENANCE_MODE_OFF=1 $image > /dev/null
+    $exec run -d --log-driver=syslog --name $name -v $volume:/volume -v $volume/$name:/var/www/html -e FORCE_MAINTENANCE_MODE_OFF=1 $image > /dev/null
     $exec run -d --log-driver=syslog --name $proxy_name -p ${internal_port}:8000 -p ${port}:80 --link $name $proxy_image > /dev/null
 }
 
