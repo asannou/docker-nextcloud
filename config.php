@@ -7,7 +7,8 @@ $CONFIG = array (
     1 => '172.16.0.0/12',
     2 => '192.168.0.0/16',
   ),
-  'datadirectory' => '/volume/data',
+  'datadirectory' => '/var/www/html/data',
   'skeletondirectory' => '',
   'enable_previews' => false,
+  'simpleSignUpLink.shown' => false,
 );
