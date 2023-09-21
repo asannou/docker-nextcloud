@@ -20,7 +20,6 @@ list_enabled_apps() {
 exclude_allowed_apps() {
   grep --invert-match --line-regexp --fixed-strings 'activity
 admin_audit
-circles
 comments
 dav
 encryption
