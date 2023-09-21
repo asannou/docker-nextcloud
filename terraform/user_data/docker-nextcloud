@@ -93,7 +93,7 @@ tag_old_images() {
 remove_old_images() {
     $exec images --format '{{.CreatedAt}} {{.ID}}' $1 | sort -r | awk '{ print $NF }' | tail -n +5 | while read image_id
     do
-        $exec rmi $image_id > /dev/null
+        $exec rmi --force $image_id > /dev/null
     done
 }
 
