@@ -12,6 +12,10 @@ RUN echo '0 4 * * * /usr/bin/find /var/www/html/data/ -regex /var/www/html/data/
 COPY password_policy.patch /root/
 RUN patch -d /usr/src/nextcloud/apps/password_policy -p 1 < /root/password_policy.patch
 
+# Allow null in $password for user key in encryption
+COPY generate_password_hash.patch /root/
+RUN patch -d /usr/src/nextcloud -p 1 < /root/generate_password_hash.patch
+
 RUN echo 'upload_tmp_dir=/volume/tmp' >> "${PHP_INI_DIR}/conf.d/nextcloud.ini"
 RUN echo 'sendmail_path=sendmail -t -i' >> "${PHP_INI_DIR}/conf.d/nextcloud.ini"
 
