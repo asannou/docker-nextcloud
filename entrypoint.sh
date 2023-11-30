@@ -35,6 +35,7 @@ user_saml'
 
 if occ status | grep -q '\- installed: true'
 then
+  occ upgrade
   occ app:enable encryption
   occ encryption:enable
   occ app:disable $(list_enabled_apps | exclude_allowed_apps) || true
