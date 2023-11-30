@@ -46,6 +46,7 @@ port="80"
 internal_port="8000"
 
 start() {
+    $exec rm --force $proxy_name $name $antivirus_name
     $exec run -d --log-driver=syslog --name $antivirus_name -v $volume/clamav/virus_db/:/var/lib/clamav/ $antivirus_image > /dev/null
     $exec run -d --log-driver=syslog --name $name -v $volume:/volume -v $volume/$name:/var/www/html --link $antivirus_name $image > /dev/null
     $exec run -d --log-driver=syslog --name $proxy_name -p ${internal_port}:8000 -p ${port}:80 --link $name $proxy_image > /dev/null
@@ -53,7 +54,6 @@ start() {
 
 stop() {
     $exec stop $proxy_name $name $antivirus_name
-    $exec rm $proxy_name $name $antivirus_name
 }
 
 status() {
