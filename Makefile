@@ -16,7 +16,7 @@ proxy: web
 	docker run -d --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
 
 web: antivirus
-	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume -v $(CURDIR)/volume/$(NAME):/var/www/html -e FORCE_MAINTENANCE_MODE_OFF --link $(ANTIVIRUS_NAME) $(IMAGE)
+	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume -v $(CURDIR)/volume/$(NAME):/var/www/html --link $(ANTIVIRUS_NAME) $(IMAGE)
 
 antivirus:
 	docker run -d --name $(ANTIVIRUS_NAME) -v $(CURDIR)/volume/clamav/virus_db/:/var/lib/clamav/ $(ANTIVIRUS_IMAGE)
