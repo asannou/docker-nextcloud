@@ -14,7 +14,7 @@ proxy: web
 	docker run -d --name $(PROXY_NAME) -p $(PORT):$(PORT) -p $(SHARING_PORT):$(SHARING_PORT) --link $(NAME) $(PROXY_IMAGE)
 
 web:
-	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume -v $(CURDIR)/volume/$(NAME):/var/www/html -e FORCE_MAINTENANCE_MODE_OFF $(IMAGE)
+	docker run -d --name $(NAME) -v $(CURDIR)/volume:/volume -v $(CURDIR)/volume/$(NAME):/var/www/html $(IMAGE)
 
 down:
 	docker rm -f $(PROXY_NAME) $(NAME)
