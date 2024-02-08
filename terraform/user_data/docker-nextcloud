@@ -33,7 +33,7 @@ image_repository="asannou/nextcloud"
 proxy_image_repository="asannou/nextcloud-sharing-only-proxy"
 antivirus_image_repository="clamav/clamav"
 
-image_version="26"
+image_version="27"
 image_branch="-strict"
 image_tag="$image_version$image_branch"
 
