@@ -3,7 +3,7 @@
 set -eu
 
 DATA=/var/www/html/data
-UPLOADTMP=/volume/tmp
+UPLOADTMP=/var/www/html/upload_tmp
 
 mkdir -p $DATA $UPLOADTMP
 
