@@ -24,7 +24,7 @@ RUN patch -d /usr/src/nextcloud/apps/password_policy -p 1 < /root/password_polic
 COPY generate_password_hash.patch /root/
 RUN patch -d /usr/src/nextcloud -p 1 < /root/generate_password_hash.patch
 
-RUN echo 'upload_tmp_dir=/volume/tmp' >> "${PHP_INI_DIR}/conf.d/nextcloud.ini"
+RUN echo 'upload_tmp_dir=/var/www/html/upload_tmp' >> "${PHP_INI_DIR}/conf.d/nextcloud.ini"
 RUN echo 'sendmail_path=sendmail -t -i' >> "${PHP_INI_DIR}/conf.d/nextcloud.ini"
 
 COPY enable-circles.sh /docker-entrypoint-hooks.d/pre-upgrade/
