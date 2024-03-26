@@ -2,7 +2,6 @@ ARG version
 FROM nextcloud:${version}-apache
 
 ENV NEXTCLOUD_UPDATE 1
-ENV NEXTCLOUD_INIT_HTACCESS true
 ENV PHP_MEMORY_LIMIT 512M
 
 RUN apt-get update \
