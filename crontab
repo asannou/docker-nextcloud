@@ -1,1 +1,1 @@
-0 4 * * * /usr/bin/find /var/www/nextcloud/data/ -regex /var/www/nextcloud/data/[^/]+/files/.* -ctime +30 -delete; /usr/local/bin/php /var/www/nextcloud/occ files:scan --all
+0 4 * * * /usr/bin/find /var/www/html/data/ -type f -regex /var/www/html/data/[^/]+/files/.* -ctime +30 | /usr/bin/sed 's|/var/www/html/data/||' | /usr/bin/xargs --max-args 1 --no-run-if-empty /var/www/html/occ files:delete --force

@@ -6,7 +6,8 @@ ENV PHP_MEMORY_LIMIT 512M
 ENV PHP_UPLOAD_LIMIT 16G
 ENV APACHE_BODY_LIMIT 0
 
-RUN echo '0 4 * * * /usr/bin/find /var/www/html/data/ -regex /var/www/html/data/[^/]+/files/.* -ctime +30 -delete; /usr/local/bin/php /var/www/html/occ files:scan --all' >> /var/spool/cron/crontabs/www-data
+COPY crontab /root/
+RUN cat /root/crontab >> /var/spool/cron/crontabs/www-data
 
 RUN apt-get update \
   && apt-get install -y supervisor \
